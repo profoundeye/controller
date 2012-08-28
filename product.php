@@ -26,12 +26,13 @@ class product extends top
 		//赋值已有产品搜索库字段
 		$t['bid'] = $this->spArgs('bid');	
 		//echo $this->spArgs('bid');
-		$this->t = $t;
+		$this->p = $t;
+		//print_r($this->p);
 		 $this->display("product.html");
 		 
 		}
 		
-	function add(){
+	function newProduct(){
 		//todo blogid没有写入
 		//首先保存公司信息，如果没有，新增，返回公司id，如果有，返回公司id
 		$companyId = $this->processCompany($this->spArgs('company'));
@@ -48,32 +49,32 @@ class product extends top
 					);
 	
 
-		//$_newRow('company_id')=$companyId;
 		$rs = $_add->create($_newRow);
-		
+
 		//保存blog和product的关联关系
-		$_add = spClass('db_blog_product');
+		/*$_add = spClass('db_blog_product');
 		$_newRow = array(
 				"blog_id"=>$this->spArgs('blog_id'),
 				"product_id"=>$rs
 			);
-		$_add->create($_newRow);
-		
-		header('Location:'.spUrl('main'));
+		$_add->create($_newRow);*/
+		//print_r($this->spArgs());exit;		
+		//header('Location:'.spUrl('main'));
+		//$liObj = $this->spArgs('company') . $_newRow['year']."年".$_newRow['style'];
+		if($rs){echo $rs;}
 		}
 		
 	function isEdit(){
-			
 			
 			return $_productList;
 		}
 		
 	function getProductList($id){
 			$prodcut_blog = spClass('db_blog');	
-			$sql = "SELECT product_id,YEAR,company,info FROM th_blog,th_blog_product,th_product,th_company WHERE th_product.company_id = th_company.id AND th_blog_product.blog_id = th_blog.bid AND th_product.id = th_blog_product.product_id AND  bid = ".$id;	
+			$sql = "SELECT product_id,YEAR,style,company,info FROM th_blog,th_blog_product,th_product,th_company WHERE th_product.company_id = th_company.id AND th_blog_product.blog_id = th_blog.bid AND th_product.id = th_blog_product.product_id AND  bid = ".$id;	
 			//echo $sql;exit;
 			$temp = $prodcut_blog->findSql($sql);
-			return $temp->blog_product;
+			return $temp;
 		}
 	
 	function search(){
@@ -84,8 +85,7 @@ class product extends top
 		//格式化
 	
 			foreach($rs as $r){
-				
-				$text[] = "{\"id:\":\"".$id."\",\"text\":\"".$r['company']['company']."&nbsp&nbsp". $r['year']."年  ".$r['style']."\"}";
+				$text[] = "{\"id\":\"".$r['id']."\",\"text\":\"".$r['company']['company']. $r['year']."年  ".$r['style']."\"}";
 				
 				//'[{"id":"AD","text":"osprey 2012年 atmos 35"},{"id":"AE","text":"burton 2011年 evo"},{"id":"AF","text":"giant 2011年 reign"}	]'
 			}
@@ -112,5 +112,21 @@ class product extends top
 			
 			}
 		return $id;
+	}
+	
+	function save(){
+		$db = spClass('db_blog_product');
+		$blog_id=$this->spArgs('blog_id');
+		//删除原始关联
+		$db->delete(array("blog_id"=>$blog_id));
+		//保存新关联数据
+		$newData = array();
+
+		foreach (array_unique($this->spArgs('product')) as $key => $value) {
+			$newData[]=array("blog_id"=>$blog_id,"product_id"=>$value);
+		}
+		
+		$db->createAll($newData);
+		header('Location:'.spUrl('main'));
 	}
 }
