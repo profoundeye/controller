@@ -42,7 +42,7 @@ class product extends top
 						"company_id"=>$companyId,
 						"year"=>$this->spArgs('year'),
 						"style"=>$this->spArgs('style'),
-						"info"=>utf8_substr($this->spArgs('info')),
+						"info"=>$this->spArgs('info'),
 						"blog_product"=>array(
 											"blog_id"=>$this->spArgs('blog_id')														
 										)		
@@ -130,3 +130,29 @@ class product extends top
 		header('Location:'.spUrl('main'));
 	}
 }
+
+/*
+ * 
+ CREATE TABLE `th_blog_product` (
+ `blog_id` int(10) unsigned DEFAULT NULL,
+ `product_id` int(10) unsigned DEFAULT NULL
+ ) ENGINE=MyISAM DEFAULT CHARSET=utf8 
+
+CREATE TABLE `th_company` (
+ `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ `company` char(100) CHARACTER SET latin1 DEFAULT NULL,
+ PRIMARY KEY (`id`)
+ ) ENGINE=MyISAM DEFAULT CHARSET=utf8 
+
+CREATE TABLE `th_product` (
+ `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ `company_id` int(10) unsigned DEFAULT NULL,
+ `year` year(4) DEFAULT NULL,
+ `style` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+ `info` text CHARACTER SET latin1,
+ `buy_url` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+ `pass` tinyint(1) DEFAULT '0',
+ PRIMARY KEY (`id`)
+ )ENGINE=MyISAM DEFAULT CHARSET=utf8 
+ * /
+ */
