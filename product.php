@@ -42,10 +42,7 @@ class product extends top
 						"company_id"=>$companyId,
 						"year"=>$this->spArgs('year'),
 						"style"=>$this->spArgs('style'),
-						"info"=>$this->spArgs('info'),
-						"blog_product"=>array(
-											"blog_id"=>$this->spArgs('blog_id')														
-										)		
+						"info"=>$this->spArgs('info'),	
 					);
 	
 
@@ -71,7 +68,7 @@ class product extends top
 		
 	function getProductList($id){
 			$prodcut_blog = spClass('db_blog');	
-			$sql = "SELECT product_id,YEAR,style,company,info FROM th_blog,th_blog_product,th_product,th_company WHERE th_product.company_id = th_company.id AND th_blog_product.blog_id = th_blog.bid AND th_product.id = th_blog_product.product_id AND  bid = ".$id;	
+			$sql = "SELECT product_id,YEAR,style,company,info FROM ".DBPRE."blog,".DBPRE."blog_product,".DBPRE."product,".DBPRE."company WHERE ".DBPRE."product.company_id = ".DBPRE."company.id AND ".DBPRE."blog_product.blog_id = ".DBPRE."blog.bid AND ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND  bid = ".$id;	
 			//echo $sql;exit;
 			$temp = $prodcut_blog->findSql($sql);
 			return $temp;

@@ -69,14 +69,25 @@ class userblog extends top
 		if(spClass('db_blog')->find(array('bid'=>$this->bid)))
 		{
 			spClass('db_blog')->incrField(array('bid'=>$this->spArgs('bid')), 'hitcount'); 
-			//print_r($this->result);exit;
+			
+			$this->p = $this->getProduct($this->bid);
+			//print_r($this->p);
 			$this->display('zlist.html',$this->result);
 		}else{
 			err404('您查看的内容可能已经修改或者删除。');	
 		}
+		
+		
 	}
 	
-	
+	//获取产品列表
+	private function getProduct($bid){
+		$db = spClass('db_product');
+		$sql = "SELECT * FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND ".DBPRE."blog_product.blog_id=".$bid;
+		$rs = $db->findSql($sql);
+		return $rs;
+		
+	}
 
 	
 	/*我关注谁*/
