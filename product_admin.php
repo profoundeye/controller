@@ -1,5 +1,5 @@
 <?
-require_once("product.php");
+require_once('product.php');
 class product_admin extends product{
 	function __construct(){
 		parent::__construct();
@@ -11,7 +11,7 @@ class product_admin extends product{
 		$this->db = $db;
 	}
 	
-	function product(){
+	function productList(){
 		$db = spClass('db_product');
 		$rs = $this->db->spLinker()->spPager($this->spArgs('page', 1), 20)->findAll();
 		$this->product = $rs;
