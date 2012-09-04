@@ -1,4 +1,4 @@
-<?
+<?php
 require_once('product.php');
 class product_admin extends product{
 	function __construct(){
@@ -37,14 +37,14 @@ class product_admin extends product{
 						"pass"=>$this->spArgs('pass'),
 					);
 		$this->db->spLinker()->update(array("id"=>$this->spArgs('id')),$_newRow);
-		header('Location:'.spUrl('product_admin','product'));
+		header('Location:'.spUrl('product_admin','productList'));
 	}
 	
 	function del(){
 		$this->db->delete(array("id"=>$this->spArgs('id')));//删除产品库表，不删除公司表
 		$_db =  spClass('db_blog_product');
 		$_db->delete(array("product_id"=>$this->spArgs('id')));//删除blog和产品库对应关系
-		header('Location:'.spUrl('product_admin','product'));
+		header('Location:'.spUrl('product_admin','productList'));
 	}
 }
 ?>
