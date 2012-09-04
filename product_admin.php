@@ -20,8 +20,9 @@ class product_admin extends product{
 	
 	function edit(){
 		//$this->db = spClass('db_product');
-		$rs = $this->db->spLinker()->find($this->spArgs('id'));
+		$rs = $this->db->spLinker()->find(array("id"=>$this->spArgs('id')));
 		$this->p = $rs;
+		//print_r($this->spArgs('id'));
 		$this->display('admin/product_edit.html');
 		//print_r($rs);
 	}
