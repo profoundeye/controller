@@ -18,18 +18,45 @@ class get extends top{
 	
 	function input(){
 		//还要增加来源出处
+		//$this->result = array();
 		$info = $this->spArgs('info');
 		$this->_host = $this->spArgs('host');
-		$values = $this-> process($info);
-		print_r($values);
+		$this->values = $this->process($info);
+		$this->tmpfile = spClass('uploadFile')->selectuptype(6);
+		$this->save_image(array_keys($this->values['imgText']));
+		
+		print_r($this->result);
+		//print_r($this->values);
+
 		//curl所有图片信息存在缓存目录
 		
-		//显示修改数组
+		//写入缓存文件路径到th_attachments表
 		
 		//调用正常photo保存模式
 		
-		$this->display("url_post.html");
+		$this->display("models/photoGet.html");
 	} 
+	
+	function buildTemplate(){
+		
+	}
+	
+	function saveToAttachments($data,$file){
+		$thisPath = $this->tmpfile.'/'.basename($file);
+		$fp = fopen($thisPath,'x');
+		fwrite($fp, $data);
+	    fclose($fp);
+		
+		$db = spClass('db_attach');
+		$mimie = pathinfo($file);
+		$data = array("bid"=>0,"path"=>$thisPath,"blogdesc"=>"","filesize"=>filesize($thisPath),"mime"=>$mimie["extension"],"uid"=>$_SESSION['user']['uid'],"time"=>time());
+		$id = $db->create($data);		
+		static $result;
+		
+		$result[]=array("id"=>$id,"img"=>$thisPath,"desc"=>$this->values["imgText"][$file]?$this->values["imgText"][$file]:"");
+		$this->result=$result;
+	}
+	
 	
 	function process($info){
 		$a = preg_split('/<p>(.*?)<\/p>|<h1.*?>(.*?)<\/h1>|<img.*?src="(.*?)".*?>/s',$info,-1,PREG_SPLIT_DELIM_CAPTURE);
@@ -42,21 +69,22 @@ class get extends top{
 		foreach($output['org'] as $k=>$o){
 			$isImg = $this->isImg($o);
 			//如果k=0，标题
-			if($k==0){$output['org']['title']=$o;}
-			if(!$isImg&&$temp==-1&&$k!=0){$output['org']['headline'].=$o;}
+			if($k==0){$output['title']=$o;}
+			if(!$isImg&&$temp==-1&&$k!=0){$output['headline'].=$o;}
 			if($isImg){
 				if(preg_match("/http/is", $o)){
-					$output['imgText'][$k]['img']=$o;
+					$key=$o;
 				}else{
-					$output['imgText'][$k]['img']="http://".$this->_host.$o;
+					$key="http://".$this->_host."/".$o;			
 				}
-				
-				$temp = $k;
+				$temp = $key;
+				$output['imgText'][$key]="";
 			}
 			if(!$isImg&&$temp!=-1){
-				$output['imgText'][$temp]['text'].=$o;
+				$output['imgText'][$temp].=$o;
 			}
 		}
+		
 		return $output;
 	}
 	
@@ -70,8 +98,56 @@ class get extends top{
 	
 	
 	
-	function kuayu(){
-		//echo '<form method="get" action="http://localhost/testyunbian/index.php?c=get&a=input"><textarea id="info name="info"> </textarea><input type="submit" name="button" id="button" value="提交" /></form>';
+	function test(){
+		print_r($_FILES);
 	}
+	
+
+	
+	function save_image($urls) {
+	    $queue = curl_multi_init();
+		$map = array();
+	    foreach ($urls as $url) {
+	        $ch = curl_init();
+	 
+	        curl_setopt($ch, CURLOPT_URL, $url);
+	        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+	        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	        curl_setopt($ch, CURLOPT_HEADER, 0);
+	        curl_setopt($ch, CURLOPT_NOSIGNAL, true);
+	 
+	        curl_multi_add_handle($queue, $ch);
+	        $map[(string) $ch] = $url;
+	    }
+	 
+	    $responses = array();
+
+	    do {
+	        while (($code = curl_multi_exec($queue, $active)) == CURLM_CALL_MULTI_PERFORM) ;
+	 
+	        if ($code != CURLM_OK) { break; }
+	 
+	        // a request was just completed -- find out which one
+	        while ($done = curl_multi_info_read($queue)) {
+	        	//保存图片，更新数据库
+	  
+	        	$this->saveToAttachments(curl_multi_getcontent($done['handle']),$map[(string) $done['handle']]);				
+	 			 	
+	            curl_multi_remove_handle($queue, $done['handle']);
+	            curl_close($done['handle']);
+	        }
+	 
+	        // Block for data in / output; error handling is done by curl_multi_exec
+	        if ($active > 0) {
+	            curl_multi_select($queue, 0.5);
+	        }
+	 
+	    } while ($active);
+	 
+	    curl_multi_close($queue);
+	    return true;
+	}
+
+	
 }
 ?>
