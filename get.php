@@ -25,7 +25,7 @@ class get extends top{
 		$this->tmpfile = spClass('uploadFile')->selectuptype(6);
 		$this->save_image(array_keys($this->values['imgText']));
 		
-		print_r($this->result);
+		//print_r($this->result);
 		//print_r($this->values);
 
 		//curl所有图片信息存在缓存目录
@@ -99,7 +99,7 @@ class get extends top{
 	
 	
 	function test(){
-		print_r($_FILES);
+		$this->display("url_post.html");
 	}
 	
 
