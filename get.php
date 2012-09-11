@@ -133,7 +133,7 @@ class get extends top{
 				$data = curl_multi_getcontent($done['handle']);
 				$file = $map[(string) $done['handle']];
 				$thisPath[$file] = $this->tmpfile.'/'.basename($file);
-				$fp = fopen($thisPath,'x');
+				$fp = fopen($thisPath[$file],'x');
 				fwrite($fp, $data);
 	   			fclose($fp);			
 	 			 	
