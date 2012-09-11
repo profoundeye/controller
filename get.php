@@ -41,19 +41,18 @@ class get extends top{
 		
 	}
 	
-	function saveToAttachments($data,$file){
-		$thisPath = $this->tmpfile.'/'.basename($file);
-		$fp = fopen($thisPath,'x');
-		fwrite($fp, $data);
-	    fclose($fp);
+	function saveToAttachments($file,$thisPath){
+		$db = spClass('db_attach');		
+		foreach ($file as  $f) {
+			$localFile  = $thisPath[$f];
+			$mimie = pathinfo($localFile);
+			$data = array("bid"=>0,"path"=>$localFile,"blogdesc"=>"","filesize"=>filesize($localFile),"mime"=>$mimie["extension"],"uid"=>$_SESSION['user']['uid'],"time"=>time());
+			$id = $db->create($data);		
+			static $result;
+			$result[]=array("id"=>$id,"img"=>$localFile,"desc"=>$this->values["imgText"][$f]?$this->values["imgText"][$f]:"");
+		}		
 		
-		$db = spClass('db_attach');
-		$mimie = pathinfo($file);
-		$data = array("bid"=>0,"path"=>$thisPath,"blogdesc"=>"","filesize"=>filesize($thisPath),"mime"=>$mimie["extension"],"uid"=>$_SESSION['user']['uid'],"time"=>time());
-		$id = $db->create($data);		
-		static $result;
 		
-		$result[]=array("id"=>$id,"img"=>$thisPath,"desc"=>$this->values["imgText"][$file]?$this->values["imgText"][$file]:"");
 		$this->result=$result;
 	}
 	
@@ -131,7 +130,12 @@ class get extends top{
 	        while ($done = curl_multi_info_read($queue)) {
 	        	//保存图片，更新数据库
 	  
-	        	$this->saveToAttachments(curl_multi_getcontent($done['handle']),$map[(string) $done['handle']]);				
+				$data = curl_multi_getcontent($done['handle']);
+				$file = $map[(string) $done['handle']];
+				$thisPath[$file] = $this->tmpfile.'/'.basename($file);
+				$fp = fopen($thisPath,'x');
+				fwrite($fp, $data);
+	   			fclose($fp);			
 	 			 	
 	            curl_multi_remove_handle($queue, $done['handle']);
 	            curl_close($done['handle']);
@@ -145,6 +149,7 @@ class get extends top{
 	    } while ($active);
 	 
 	    curl_multi_close($queue);
+		$this->saveToAttachments($urls,$thisPath);	
 	    return true;
 	}
 

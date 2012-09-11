@@ -20,6 +20,7 @@
 			$this->p = $this->getProduct($this->bid);
 			$this->body = split_attribute($rs['body']);
 			$this->rs = $rs;
+			$this->titles = $rs['title'];
 			$this->display('zlist.html');
 		}else{
 			err404('您查看的内容可能已经修改或者删除。');	
