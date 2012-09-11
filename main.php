@@ -24,7 +24,7 @@ class main extends top
 			$display ='index';
 		}
 		$this->CurrentModule = 'index';
-		
+
 		$this->display($display.'.html');
 	}
 
