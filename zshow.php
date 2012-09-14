@@ -18,7 +18,7 @@
 			spClass('db_blog')->incrField(array('bid'=>$this->spArgs('bid')), 'hitcount'); 
 			
 			$this->p = $this->getProduct($this->bid);
-			$this->body = split_attribute($rs['body']);
+			$this->body = split_attribute(converPic($rs['body']));
 			$this->rs = $rs;
 			$this->display('zlist.html');
 		}else{
@@ -27,6 +27,7 @@
 		
 		
 	}
+	
 	
 	//获取产品列表
 	private function getProduct($bid){
