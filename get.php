@@ -64,6 +64,7 @@ class get extends top{
 			if(!empty($temp)){$output['org'][]=$temp;}
 		}
 		$temp = -1;
+		print_r($info);
 		foreach($output['org'] as $k=>$o){
 			$isImg = $this->isImg($o);
 			//如果k=0，标题
@@ -86,7 +87,7 @@ class get extends top{
 				$output['imgText'][$temp].=$o;
 			}
 		}
-		print_r($output);exit;
+		//print_r($output);exit;
 		return $output;
 	}
 	
