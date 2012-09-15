@@ -63,7 +63,6 @@ class get extends top{
 			$temp = trim(preg_replace('/<.*?>/',"",$i));
 			if(!empty($temp)){$output['org'][]=$temp;}
 		}
-		
 		$temp = -1;
 		foreach($output['org'] as $k=>$o){
 			$isImg = $this->isImg($o);
@@ -76,6 +75,10 @@ class get extends top{
 				}else{
 					$key="http://".$this->_host."/".$o;			
 				}
+							
+				if(is_string($isImg)){
+					$key=$key.".".$isImg;
+				}
 				$temp = $key;
 				$output['imgText'][$key]="";
 			}
@@ -83,7 +86,7 @@ class get extends top{
 				$output['imgText'][$temp].=$o;
 			}
 		}
-		
+		print_r($output);exit;
 		return $output;
 	}
 	
@@ -91,6 +94,12 @@ class get extends top{
 		if(preg_match("/png|jpeg|jpg|gif/is", $str)){
 			return true;
 		}else{
+			if(preg_match("/http:/is",$str)){
+				$http = get_headers($str,1);
+				if(preg_match("/png|jpeg|jpg|gif/is",$http["Content-Type"])){
+					return str_replace("image/", "", $http["Content-Type"]);
+				}
+			}
 			return false;
 		}
 	}
