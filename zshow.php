@@ -30,7 +30,7 @@
 	
 	
 	//获取产品列表
-	private function getProduct($bid){
+	function getProduct($bid){
 		$db = spClass('db_product');
 		$sql = "SELECT * FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND ".DBPRE."blog_product.blog_id=".$bid;
 		$rs = $db->findSql($sql);

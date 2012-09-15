@@ -81,7 +81,7 @@ class userblog extends top
 	}
 	
 	//获取产品列表
-	private function getProduct($bid){
+	function getProduct($bid){
 		$db = spClass('db_product');
 		$sql = "SELECT * FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND ".DBPRE."blog_product.blog_id=".$bid;
 		$rs = $db->findSql($sql);
@@ -91,17 +91,17 @@ class userblog extends top
 
 	
 	/*我关注谁*/
-	private function getMyFollow(){
+	function getMyFollow(){
 		$this->follow = spClass('db_follow')->spLinker()->findAll(array('uid'=>$this->user_data['uid']),'time desc','','24');  //显示我关注的24个
 	}
 	
 	/*谁关注我*/
-	private function getMyLook(){
+	function getMyLook(){
 		$this->myLook = spClass('db_follow')->findCount(array('touid'=>$this->user_data['uid']));
 	}
 	
 	/*我是否关注*/
-	private function isFollow()
+	function isFollow()
 	{
 		if($_SESSION['uid'] == $this->user_data['uid']){
 			return -1;  //自己
@@ -114,7 +114,7 @@ class userblog extends top
 	}
 	
 	/*我与某人的私心数量*/
-	private function pmNum(){
+	function pmNum(){
 		if($this->user_data['uid'] != $this->uid){
 			$uid = $this->uid;
 			$touid = $this->user_data['uid'];
@@ -124,7 +124,7 @@ class userblog extends top
 		$this->pmnum = $rs;
 	}
 	
-	private function getBlogFava(){
+	function getBlogFava(){
 		$bid = intval($this->spArgs('bid'));
 		$sql = "select m.username,m.uid,m.domain,l.* from ".DBPRE."likes as l LEFT JOIN  ".DBPRE."member as m on l.uid = m.uid where l.bid = '$bid' order by l.time desc limit 0,26";
 		$rs =  spClass('db_member')->findSql($sql);
@@ -138,7 +138,7 @@ class userblog extends top
 	/*获取用户的skin and base info
 	  读取 domain 或者 uid,或者从$bid 读取
 	*/
-	private function getUserSkin($bid=0)
+	function getUserSkin($bid=0)
 	{
 		if($this->spArgs('bid')){
 			$rs = spClass('db_theme')->getByBid(intval($this->spArgs('bid')));
@@ -152,7 +152,7 @@ class userblog extends top
 		if($skin['setup']) $skin['setup'] = unserialize($skin['setup']);
 		$rs['blogtag'] = explode(',',$rs['blogtag']); //切割成数组
 		$this->user_data = $rs;
-		
+	
 		$this->user_skin = $skin;   //将数据赋值给全局变量
 	}
 
