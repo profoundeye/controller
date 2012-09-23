@@ -2,7 +2,7 @@
     class tagIt extends top{
     	function __construct(){  
        		parent::__construct(); 
-			//$this->needLogin();
+			$this->needLogin();
     	}
 		
 		function playing(){
@@ -102,6 +102,8 @@
 			
 			
 		}
+		
+		function test(){echo "ok";}
 		
     }
 ?>
