@@ -34,9 +34,42 @@
 		$db = spClass('db_product');
 		$sql = "SELECT * FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND ".DBPRE."blog_product.blog_id=".$bid;
 		$rs = $db->findSql($sql);
+		foreach($rs as $k=>$r){
+			$rs[$k]["tags"]=$this->getThisTag($r['product_id'],$this->uid);
+		}
+		//print_r($rs);
 		return $rs;
-		
+	}
+	
+	function getProductPic($id=3){
+		$db = spClass('db_blog_product');
+		$pic = array();
+		$rs = $db->spLinker()->findAll($id);
+		foreach($rs as $r){
+			if($r['attachments']){
+				$pic= array_merge($pic,$r['attachments']);
+			}			
+		}
+		foreach($pic as $k=>$p){
+			$pic[$k]['picUrl'] = converPic($p['path'],",h_100");
+		}
+		return $pic;
 	}
 
+	function getThisTag($productId,$uid){
+		$db = spClass("db_product_tag_user");
+		$rs = $db->spLinker()->findAll(array("product_id"=>$productId,"user_id"=>$uid),"tag_id desc","",10);
+		foreach ($rs as $k => $v) {
+			if($v['producttags'][0]['tag']!='在玩'&&$v['producttags'][0]['tag']!='想玩'){
+				$str['tags'].="<span>".$v['producttags'][0]['tag']."</span>";
+			}else{
+				$str['playing'] = $v['producttags'][0]['tag'];
+			}			
+		}
+		return $str;	
+	}
+	
+	
+	
     }
 ?>
