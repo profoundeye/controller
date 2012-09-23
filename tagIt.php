@@ -1,5 +1,5 @@
 <?php
-    class tagIt extends top{
+    class tagit extends top{
     	function __construct(){  
        		parent::__construct(); 
 			$this->needLogin();
