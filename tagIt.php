@@ -5,7 +5,7 @@
 			$this->needLogin();
     	}
 		
-		function playing(){
+		function thisplaying(){
 			//返回对话框内容
 			if($this->spArgs('interest')=="在玩"){
 				$playing = "checked";
