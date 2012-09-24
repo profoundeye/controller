@@ -10,13 +10,20 @@ class product extends top
 { 
 
 	function __construct(){  
-        parent::__construct();
+        parent::__construct();		
 		$this->productList = array();//如果此变量为空，说明当前对应文章没有包含产品库数据，需要增加
 		
 		if($this->spArgs('bid')){
 			$this->_bid=$this->spArgs('bid');
-			$this->productList = $this->getProductList($this->_bid);
 			
+			//判断权限
+			if($_SESSION['admin'] != 1){
+				if($this->getUid($this->_bid) != $this->uid){
+					$this->error('您没有权利编辑该文章',spUrl('main','index'));
+				}
+			}
+			
+			$this->productList = $this->getProductList($this->_bid);			
 		};
      }  
 	
@@ -68,8 +75,7 @@ class product extends top
 		
 	function getProductList($id){
 			$prodcut_blog = spClass('db_blog');	
-			$sql = "SELECT product_id,YEAR,style,company,info FROM ".DBPRE."blog,".DBPRE."blog_product,".DBPRE."product,".DBPRE."company WHERE ".DBPRE."product.company_id = ".DBPRE."company.id AND ".DBPRE."blog_product.blog_id = ".DBPRE."blog.bid AND ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND  bid = ".$id;	
-			//echo $sql;exit;
+			$sql = "SELECT product_id,uid,YEAR,style,company,info FROM ".DBPRE."blog,".DBPRE."blog_product,".DBPRE."product,".DBPRE."company WHERE ".DBPRE."product.company_id = ".DBPRE."company.id AND ".DBPRE."blog_product.blog_id = ".DBPRE."blog.bid AND ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND  bid = ".$id;	
 			$temp = $prodcut_blog->findSql($sql);
 			return $temp;
 		}
@@ -126,6 +132,13 @@ class product extends top
 		$db->createAll($newData);
 		header('Location:'.spUrl('main'));
 	}
+	
+	function getUid($bid){
+		$db = spClass('db_blog');	
+		$rs = $db->find(array("bid"=>$bid));
+		return $rs["uid"];
+	}
+
 }
 
 /*
