@@ -55,7 +55,7 @@ class user extends top
 	/*上传头像*/
 	function upavatar(){
 		$upfile = spClass('uploadFile');
-		$upfile->set_filetypes('jpg|png|jpge|bmp');
+		$upfile->set_filetypes('jpg|png|jpeg|bmp');
 		$upfile->set_path(APP_PATH.'/avatar');
 		$upfile->set_imgresize(false);
 		$upfile->set_imgmask(false);
