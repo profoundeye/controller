@@ -46,10 +46,14 @@ class get extends top{
 		foreach ($file as  $f) {
 			$localFile  = $thisPath[$f];
 			$mimie = pathinfo($localFile);
+			//echo $mimie;
+			if($mimie["extension"]){
 			$data = array("bid"=>0,"path"=>$localFile,"blogdesc"=>"","filesize"=>filesize($localFile),"mime"=>$mimie["extension"],"uid"=>$_SESSION['user']['uid'],"time"=>time());
-			$id = $db->create($data);		
+			$id = $db->create($data);	
+		
 			static $result;
 			$result[]=array("id"=>$id,"img"=>$localFile,"desc"=>$this->values["imgText"][$f]?$this->values["imgText"][$f]:"");
+			}
 		}		
 		
 		
