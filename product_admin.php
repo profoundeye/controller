@@ -13,7 +13,7 @@ class product_admin extends product{
 	
 	function productList(){
 		$db = spClass('db_product');
-		$rs = $this->db->spLinker()->spPager($this->spArgs('page', 1), 20)->findAll();
+		$rs = $this->db->spLinker()->spPager($this->spArgs('page', 1), 20)->findAll("",'id desc');
 		$this->product = $rs;
 		$this->display('admin/product.html');
 	}
