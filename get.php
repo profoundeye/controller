@@ -107,7 +107,7 @@ class get extends top{
 	
 	
 	
-	function test(){
+	function tools(){
 		$this->display("url_post.html");
 	}
 	
