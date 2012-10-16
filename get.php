@@ -62,9 +62,10 @@ class get extends top{
 	
 	
 	function process($info){
+		//过滤img元素
 		$a = preg_split('/<p>(.*?)<\/p>|<h1.*?>(.*?)<\/h1>|<img.*?src="(.*?)".*?>/s',$info,-1,PREG_SPLIT_DELIM_CAPTURE);
 		foreach($a as $i){
-			$temp = trim(preg_replace('/<.*?>/',"",$i));
+			$temp = htmlspecialchars(trim(preg_replace('/<.*?>/',"",$i)));
 			if(!empty($temp)){$output['org'][]=$temp;}
 		}
 		$temp = -1;
@@ -96,7 +97,7 @@ class get extends top{
 	}
 	
 	function isImg($str){
-		if(preg_match("/png|jpeg|jpg|gif/is", $str)){
+		if(preg_match("/[png|jpeg|jpg|gif]$/is", $str)){
 			return true;
 		}else{
 			if(preg_match("/http:/is",$str)){
