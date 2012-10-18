@@ -72,6 +72,7 @@
 	}
 	
 	function getSameTagArticle($tag,$bid){
+		if(empty($tag)){return ;}
 		$tags = split(",", $tag);
 		foreach ($tags as $t) {
 			$data = spClass('db_tags')->getArticleFromTag($t);
