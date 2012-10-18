@@ -20,6 +20,7 @@
 			$this->p = $this->getProduct($this->bid);
 			$this->body = split_attribute(converPic($rs['body']));
 			$this->rs = $rs;
+			$this->meId = $_SESSION['user']['uid'];
 			$this->tagArticle = $this->getSameTagArticle($rs['tag'],$this->spArgs('bid'));
 			$this->tag = split(",",$rs['tag']);
 			
