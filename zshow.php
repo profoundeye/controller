@@ -22,6 +22,7 @@
 			$this->rs = $rs;
 			$this->tagArticle = $this->getSameTagArticle($rs['tag'],$this->spArgs('bid'));
 			$this->tag = split(",",$rs['tag']);
+			
 			$this->display('zlist.html');
 		}else{
 			err404('您查看的内容可能已经修改或者删除。');	
@@ -33,13 +34,21 @@
 	
 	//获取产品列表
 	function getProduct($bid){
+		global $spConfig;
 		$db = spClass('db_product');
 		$sql = "SELECT * FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id AND ".DBPRE."blog_product.blog_id=".$bid;
 		$rs = $db->findSql($sql);
 		foreach($rs as $k=>$r){
 			$rs[$k]["tags"]=$this->getThisTag($r['product_id'],$this->uid);
+			$rs[$k]["fans"]['playing']=$this->getProductFans($r['product_id'],$spConfig['playing']);
+			$rs[$k]["fans"]['want']=$this->getProductFans($r['product_id'],$spConfig['want']);
 		}
-		//print_r($rs);
+		//print_r($rs);exit;
+		return $rs;
+	}
+	
+	function getProductFans($pid,$p){
+		$rs = spClass('db_product_tag_user')->findAll(array("product_id"=>$pid,"tag_id"=>$p),"","user_id");
 		return $rs;
 	}
 	
@@ -83,7 +92,7 @@
 		$id = array_unique($id);
 		unset($data);
 		
-		$data  =spClass('db_blog')->findAll("bid in (".join(",",$id).") and open=1","bid desc","title,bid,body","5");
+		$data  =spClass('db_blog')->findAll("bid in (".join(",",$id).") and open=1","bid desc","title,bid,body","10");
 
 			foreach($data as $ik=>$i){
 				$outPut[$k][$ik]['bid']=$i["bid"];

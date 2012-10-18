@@ -12,7 +12,7 @@
 			}else{
 				$play = "checked";
 			}
-			
+
 			$thisTags = $this->thisTag($this->spArgs("productId"),$this->uid);
 			foreach ($thisTags as $k => $v) {
 				if($v['producttags'][0]['tag']!='在玩'&&$v['producttags'][0]['tag']!='想玩')
@@ -40,7 +40,7 @@
 			}
 			$str .='</dd></dl></li>';
 			$str .='</ul>';
-			echo $str;
+			$this->api_success($str);
 			//return $str;
 		}
 		
