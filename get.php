@@ -62,15 +62,22 @@ class get extends top{
 	
 	
 	function process($info){
-		//过滤img元素
-//$info = ""
-		$a = preg_replace("/\((?R)*\)/"," ",$info);
-		//print_r($a);exit;
-		$a = preg_split('/<p>(.*?)<\/p>|<h1.*?>(.*?)<\/h1>|<img.*?src="(.*?)".*?>/s',$info,-1,PREG_SPLIT_DELIM_CAPTURE);
+		$a = preg_split('/<p>(.*?)<\/p>|<h1.*?>(.*?)<\/h1>|(<img("[^"]*"|\'[^\']*\'|[^\'">])*>)/s',$info,-1,PREG_SPLIT_DELIM_CAPTURE);
 		foreach($a as $i){
-			$temp = htmlspecialchars(trim(preg_replace('/<.*?>/',"",$i)));
+			if(!empty($i)){
+			if(preg_match("/^<img/i",$i)){
+				unset($match);
+				$rs = preg_match("/src=\"(.*?)\"/", $i,$match);
+				$temp = $match[1];
+			}else{
+				if($i=='"1"'||$i=='"readable_class_big_image"'){$i="";}//匹配sina blog的问题
+				$temp = trim(preg_replace('/<.*?>/',"",$i));				
+			}
+			
 			if(!empty($temp)){$output['org'][]=$temp;}
+			}
 		}
+		//print_r($output);exit;
 		$temp = -1;
 		//print_r($info);
 		foreach($output['org'] as $k=>$o){
