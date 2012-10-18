@@ -20,6 +20,8 @@
 			$this->p = $this->getProduct($this->bid);
 			$this->body = split_attribute(converPic($rs['body']));
 			$this->rs = $rs;
+			$this->tagArticle = $this->getSameTagArticle($rs['tag'],$this->spArgs('bid'));
+			$this->tag = split(",",$rs['tag']);
 			$this->display('zlist.html');
 		}else{
 			err404('您查看的内容可能已经修改或者删除。');	
@@ -69,7 +71,27 @@
 		return $str;	
 	}
 	
-	
+	function getSameTagArticle($tag,$bid){
+		$tags = split(",", $tag);
+		foreach ($tags as $t) {
+			$data = spClass('db_tags')->getArticleFromTag($t);
+			foreach($data as $k=>$d){
+				if($d['bid']!=$bid)$id[]=$d['bid'];
+			}
+		}
+		$id = array_unique($id);
+		unset($data);
+		
+		$data  =spClass('db_blog')->findAll("bid in (".join(",",$id).") and open=1","bid desc","title,bid,body","5");
+
+			foreach($data as $ik=>$i){
+				$outPut[$k][$ik]['bid']=$i["bid"];
+				$outPut[$k][$ik]['title']=$i["title"];
+				$outPut[$k][$ik]['body']=split_attribute(converPic($i["body"]));
+			}
+		
+		return $outPut;
+	}
 	
     }
 ?>
