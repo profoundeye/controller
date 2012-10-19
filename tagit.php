@@ -48,7 +48,14 @@
 			//返回用户常用的10个tag
 			$db = spClass("db_product_tag_user");
 			$rs = $db->spLinker()->findAll(array("user_id"=>$this->uid),"tag_id desc","",10);
-			return $rs;
+			$temp = array();
+			foreach($rs as $r){				
+				if(!in_array($r['producttags'][0][tag],$temp)){
+					$temp[] = $r['producttags'][0][tag];
+					$outPut[]= $r;
+				}
+			}
+			return $outPut;
 		}
 		
 		function productTag($productId){
