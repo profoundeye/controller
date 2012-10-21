@@ -13,14 +13,14 @@ class searchopt extends top{
 	}
 
 	public function index(){
-		echo "<a href=".spUrl('searchopt','getRss',array('method'=>'index')).">index</a><br />";
-		echo "<a href=".spUrl('searchopt','getRss',array('method'=>'recommend')).">recommend</a><br />";
-		echo "<a href=".spUrl('searchopt','getRss',array('method'=>'discovery')).">discovery</a><br />";
-		echo "<a href=".spUrl('searchopt','getRss',array('method'=>'userHome','uid'=>2)).">userHome</a><br />";
-		echo "<a href=".spUrl('searchopt','getRss',array('method'=>'tag')).">tag</a><br />";
+		echo "<a href=".spUrl('searchopt','getrss',array('method'=>'index')).">index</a><br />";
+		echo "<a href=".spUrl('searchopt','getrss',array('method'=>'recommend')).">recommend</a><br />";
+		echo "<a href=".spUrl('searchopt','getrss',array('method'=>'discovery')).">discovery</a><br />";
+		echo "<a href=".spUrl('searchopt','getrss',array('method'=>'userHome','uid'=>2)).">userHome</a><br />";
+		echo "<a href=".spUrl('searchopt','getrss',array('method'=>'tag')).">tag</a><br />";
 	}
 
-	public function getRss(){
+	public function getrss(){
 		$p = $this->spArgs();
 		$method = $p['method'];
 		$content = '';
