@@ -139,7 +139,9 @@ class searchopt extends top{
 								'title' => $this->yb['site_title'].'--首页',
 							),
 				);
-		$rss = spClass('sitemap',array($config));
+				import("siteMap.php");
+				$rss = new sitemap($config);
+		//$rss = spClass('sitemap',array($config));
 		$db_blog = spClass('db_blog');
 		$db_models = spClass('db_models');
 		$models = $db_models->findAll(NULL,NULL,'id,name');
