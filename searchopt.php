@@ -153,7 +153,7 @@ class searchopt extends top{
 		$_datas = array();
 		foreach($datas as $key=>$val){
 			$_datas[] = array('title' => $val['title'],
-						'link' => $this->siteHost.spUrl('userblog','show',array('bid'=>$val['bid'])),
+						'link' => $this->siteHost.spUrl('zshow','show',array('bid'=>$val['bid'])),
 						'cate' => $_models[$val['type']],
 						'desc' => $this->showBody($val['body']),
 						'pubDate' => $val['time'],
