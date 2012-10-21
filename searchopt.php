@@ -45,6 +45,7 @@ class searchopt extends top{
 				
 				default:
 					//$this->jump(spUrl('main','index'));
+					$content = $this->indexRss();
 			}
 			//写缓存
 			spAccess('w','rss_'.$method,$content,$this->cacheTime);
