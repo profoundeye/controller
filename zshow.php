@@ -23,7 +23,6 @@
 			$this->meId = $_SESSION['user']['uid'];
 			$this->tagArticle = $this->getSameTagArticle($rs['tag'],$this->spArgs('bid'));
 			$this->tag = split(",",$rs['tag']);
-			
 			$this->display('zlist.html');
 		}else{
 			err404('您查看的内容可能已经修改或者删除。');	
