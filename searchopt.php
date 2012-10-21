@@ -4,7 +4,7 @@ class searchopt extends top{
 
 	public function __construct()
 	{
-		import(sitemap.php);		
+		import(siteMap.php);		
 		parent::__construct();
 		$uri = trim(dirname($GLOBALS['G_SP']['url']['url_path_base']),'\/\\');
 		if( '' == $uri ){ $uri = 'http://'.$_SERVER['HTTP_HOST']; 	}else{ $uri = 'http://'.$_SERVER['HTTP_HOST'].'/'.$uri; }
