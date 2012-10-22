@@ -90,7 +90,7 @@
 			}
 		}
 		$id = array_unique($id);
-		if(empty($tag)||empty($bid)){return ;}
+		if(empty($tag)||empty($id)){return ;}
 		unset($data);
 		
 		$data  =spClass('db_blog')->findAll("bid in (".join(",",$id).") and open=1","bid desc","title,bid,body","10");
