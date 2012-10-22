@@ -81,7 +81,7 @@
 	}
 	
 	function getSameTagArticle($tag,$bid){
-		if(empty($tag)){return ;}
+		if(empty($tag)||empty($bid)){return ;}
 		$tags = split(",", $tag);
 		foreach ($tags as $t) {
 			$data = spClass('db_tags')->getArticleFromTag($t);
@@ -90,6 +90,7 @@
 			}
 		}
 		$id = array_unique($id);
+		if(empty($tag)||empty($bid)){return ;}
 		unset($data);
 		
 		$data  =spClass('db_blog')->findAll("bid in (".join(",",$id).") and open=1","bid desc","title,bid,body","10");
