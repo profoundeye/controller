@@ -40,7 +40,7 @@
 			}
 			$str .='</dd></dl></li>';
 			//分享按钮
-			$str .='<li class="share_icon"><input id="shareThis" type="checkbox" checked="checked">分享到:<span class="tsina" ><input type="radio" name="share"  value="tsina" checked /></span><span class="qzone"><input type="radio" name="share"  value="qzone" /></span><span class="renren"><input type="radio" name="share" value="renren" /></span></li>';
+			$str .='<li class="share_icon"><input id="shareThis" type="checkbox" checked="checked" title="'.$this->spArgs('productTitle').'">分享到:<span class="tsina" ><input type="radio" name="share"  value="tsina" checked /></span><span class="qzone"><input type="radio" name="share"  value="qzone" /></span><span class="renren"><input type="radio" name="share" value="renren" /></span></li>';
 			$str .='</ul>';
 			$this->api_success($str);
 			//return $str;
