@@ -48,7 +48,7 @@
 	}
 	
 	function getProductFans($pid,$p){
-		$rs = spClass('db_product_tag_user')->findAll(array("product_id"=>$pid,"tag_id"=>$p),"","user_id");
+		$rs = spClass('db_product_tag_user')->spLinker('productUser')->findAll(array("product_id"=>$pid,"tag_id"=>$p),"","user_id");
 		return $rs;
 	}
 	
