@@ -8,7 +8,7 @@
 		function thisplaying(){
 			//$this->api_success(is_avatar_path($_SESSION['user']['uid']));exit;
 			if(!is_avatar_path($_SESSION['user']['uid'])){
-				$this->api_success("您还没有上传头像呢,有一个头像，看上去会更酷。<a href=\"".spUrl("user","setting")."\">点击这里上传</a>");
+				$this->api_error("您还没有上传头像呢,有一个头像，看上去会更酷。<a href=\"".spUrl("user","setting")."\">点击这里上传</a>");
 				return;
 			}
 			
@@ -81,7 +81,12 @@
 		}
 		
 		function saveTag(){
-			
+			$pid = $this->spArgs("productId");
+			if(!is_numeric($pid)){
+				//$this->api_error("标签保存失败");	
+				return false;		
+			}
+
 			//删除已有的标签对应关系 
 			$db = spClass("db_product_tag_user");
 			$data = array("user_id"=>$this->uid,"product_id"=>$this->spArgs("productId"));
