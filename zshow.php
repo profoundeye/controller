@@ -48,7 +48,10 @@
 	}
 	
 	function getProductFans($pid,$p){
-		$rs = spClass('db_product_tag_user')->spLinker('productUser')->findAll(array("product_id"=>$pid,"tag_id"=>$p),"","user_id");
+		//$rs = spClass('db_product_tag_user')->spLinker('productUser')->findAll(array("product_id"=>$pid,"tag_id"=>$p),"","user_id");
+		$sql = "SELECT * FROM ".DBPRE."product_tag_user,".DBPRE."member WHERE ".DBPRE."product_tag_user.user_id=".DBPRE."member.uid AND ".DBPRE."product_tag_user.product_id=".$pid." AND ".DBPRE."product_tag_user.tag_id=".$p." order by source desc";
+		$rs = spClass('db_product_tag_user')->findsql($sql);
+		//print_r($rs);exit;
 		return $rs;
 	}
 	
