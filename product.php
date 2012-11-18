@@ -138,6 +138,8 @@ class product extends top
 		$rs = $db->find(array("bid"=>$bid));
 		return $rs["uid"];
 	}
+	
+	
 
 }
 

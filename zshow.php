@@ -107,5 +107,62 @@
 		return $outPut;
 	}
 	
+	
+	function product(){
+		$pid = $this->spArgs("pid");
+		$this->productId = $pid;
+		$this->thisProductInfo = $this->_getProductInfo($pid);
+		$this->company = $this->thisProductInfo[0]['company']['company'];
+		$this->blogInfo = $this->_getProductBlog($pid);
+		$this->sameCompanyProduct = $this->_getSameCompayProduct($this->thisProductInfo[0]['company_id']);
+		//print_r($this->sameCompanyProduct);
+		$this->display('zproduct.html');
+	}
+	
+	function _getSameCompayProduct($cid){
+		//echo $cid;exit;
+		$rs = spClass('db_product')->spLinker("company")->findAll(array("company_id"=>$cid));
+		
+		foreach($rs as $k=>$r){
+			$rs[$k]["productInfo"]=$this->_getProductInfo($r['id']);
+		}
+		return $rs;
+	}
+	
+	
+	function _getProductInfo($pid){
+		global $spConfig;
+		$db = spClass('db_product');
+		$rs = $db->spLinker("company")->findAll(array("id"=>$pid));
+		
+		foreach($rs as $k=>$r){
+			$rs[$k]["tags"]=$this->getThisTag($r['id'],$this->uid);
+			$rs[$k]["fans"]['playing']=$this->getProductFans($r['id'],$spConfig['playing']);
+			$rs[$k]["fans"]['want']=$this->getProductFans($r['id'],$spConfig['want']);
+		}
+	
+		return $rs;
+	}
+	
+	function _getProductBlog($pid){
+		$db = spClass('db_blog_product');
+		$rs = $db->findAll(array("product_id"=>$pid));
+		foreach ($rs as $key => $v) {
+			$rs[$key]["blog"]=$this->_returnBlogContent($v['blog_id']);
+		}
+		return $rs;
+	}
+	
+	function _returnBlogContent($bid){
+		$sql = "SELECT * FROM `".DBPRE."blog` AS b  where b.open = 1 and b.bid = '$bid'";
+		$rs = spClass('db_blog')->spLinker('user')->findAll(array('bid'=>$bid));
+		//print_r($rs);exit;
+			$rs['body'] = split_attribute(converPic($rs[0]['body']));
+			$rs['tag'] = split(",",$rs['tag']);	
+		return $rs;	
+    }
+	
+
+
     }
 ?>
