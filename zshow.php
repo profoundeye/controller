@@ -20,7 +20,7 @@
 			$this->p = $this->getProduct($this->bid);
 			$this->body = split_attribute(converPic($rs['body']));
 			$this->rs = $rs;
-			$this->meId = $_SESSION['user']['uid'];
+			$this->meId = $_SESSION['uid'];
 			$this->tagArticle = $this->getSameTagArticle($rs['tag'],$this->spArgs('bid'));
 			$this->tag = split(",",$rs['tag']);
 			$this->display('zlist.html');
@@ -115,7 +115,7 @@
 		$this->company = $this->thisProductInfo[0]['company']['company'];
 		$this->blogInfo = $this->_getProductBlog($pid);
 		$this->sameCompanyProduct = $this->_getSameCompayProduct($this->thisProductInfo[0]['company_id']);
-		//print_r($this->sameCompanyProduct);
+		//print_r($this->thisProductInfo);
 		$this->display('zproduct.html');
 	}
 	

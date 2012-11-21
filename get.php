@@ -48,7 +48,7 @@ class get extends top{
 			$mimie = pathinfo($localFile);
 			//echo $mimie;
 			if($mimie["extension"]){
-			$data = array("bid"=>0,"path"=>$localFile,"blogdesc"=>"","filesize"=>filesize($localFile),"mime"=>$mimie["extension"],"uid"=>$_SESSION['user']['uid'],"time"=>time());
+			$data = array("bid"=>0,"path"=>$localFile,"blogdesc"=>"","filesize"=>filesize($localFile),"mime"=>$mimie["extension"],"uid"=>$_SESSION['uid'],"time"=>time());
 			$id = $db->create($data);	
 		
 			static $result;

@@ -6,8 +6,8 @@
     	}
 		
 		function thisplaying(){
-			//$this->api_success(is_avatar_path($_SESSION['user']['uid']));exit;
-			if(!is_avatar_path($_SESSION['user']['uid'])){
+			//$this->api_success(is_avatar_path($_SESSION['uid']));exit;
+			if(!is_avatar_path($_SESSION['uid'])){
 				$this->api_error("您还没有上传头像呢,有一个头像，看上去会更酷。<a href=\"".spUrl("user","setting")."\">点击这里上传</a>");
 				return;
 			}
