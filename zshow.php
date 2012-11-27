@@ -22,6 +22,7 @@
 			$this->rs = $rs;
 			$this->meId = $_SESSION['uid'];
 			$this->tagArticle = $this->getSameTagArticle($rs['tag'],$this->spArgs('bid'));
+			$this->shareImg = $this->returnFirstImg();
 			$this->tag = split(",",$rs['tag']);
 			$this->display('zlist.html');
 		}else{
@@ -31,6 +32,11 @@
 		
 	}
 	
+	function returnFirstImg(){
+		if(isset($this->body['attr']['img'][0]['url'])){
+			return converPic($this->body['attr']['img'][0]['url']);
+		}
+	}
 	
 	//获取产品列表
 	function getProduct($bid){
@@ -115,9 +121,10 @@
 		$this->company = $this->thisProductInfo[0]['company']['company'];
 		$this->blogInfo = $this->_getProductBlog($pid);
 		$this->sameCompanyProduct = $this->_getSameCompayProduct($this->thisProductInfo[0]['company_id']);
-		//print_r($this->thisProductInfo);
+		//print_r($this->blogInfo);
 		$this->display('zproduct.html');
 	}
+	
 	
 	function _getSameCompayProduct($cid){
 		//echo $cid;exit;
@@ -146,9 +153,11 @@
 	
 	function _getProductBlog($pid){
 		$db = spClass('db_blog_product');
-		$rs = $db->findAll(array("product_id"=>$pid));
+		$rs = $db->findAll(array("product_id"=>$pid),"blog_id desc");
 		foreach ($rs as $key => $v) {
-			$rs[$key]["blog"]=$this->_returnBlogContent($v['blog_id']);
+			$temp =$this->_returnBlogContent($v['blog_id']);
+			if($temp[0]['type']==1)$rs["sms"][$key]["blog"]=$temp;
+			if($temp[0]['type']==3)$rs["blog"][$key]["blog"]=$temp;
 		}
 		return $rs;
 	}
@@ -157,7 +166,7 @@
 		$sql = "SELECT * FROM `".DBPRE."blog` AS b  where b.open = 1 and b.bid = '$bid'";
 		$rs = spClass('db_blog')->spLinker('user')->findAll(array('bid'=>$bid));
 		//print_r($rs);exit;
-			$rs['body'] = split_attribute(converPic($rs[0]['body']));
+			$rs['body'] = split_attribute(converPic($rs[0]['body'],",h_125"));
 			$rs['tag'] = split(",",$rs['tag']);	
 		return $rs;	
     }

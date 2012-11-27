@@ -39,6 +39,16 @@ class product extends top
 		 
 		}
 		
+	function newShow(){
+		$t['productList'] = $this->productList;	//赋值已关联产品数据 
+		//赋值已有产品搜索库字段
+		$t['bid'] = $this->spArgs('bid');	
+		//echo $this->spArgs('bid');
+		$this->p = $t;
+		$this->display("newproduct.html");
+	}
+
+
 	function newProduct(){
 		//todo blogid没有写入
 		//首先保存公司信息，如果没有，新增，返回公司id，如果有，返回公司id
@@ -67,7 +77,28 @@ class product extends top
 		//$liObj = $this->spArgs('company') . $_newRow['year']."年".$_newRow['style'];
 		if($rs){echo $rs;}
 		}
-		
+	
+	function newProduct2(){
+		//todo blogid没有写入
+		//首先保存公司信息，如果没有，新增，返回公司id，如果有，返回公司id
+		$companyId = $this->processCompany($this->spArgs('company'));
+		//保存产品信息
+		$_add = spClass('db_product');
+		$_newRow = array(
+						"company_id"=>$companyId,
+						"year"=>$this->spArgs('year'),
+						"style"=>$this->spArgs('style'),
+						"info"=>$this->spArgs('info'),	
+					);
+	
+
+		$rs = $_add->create($_newRow);
+
+			if($rs){
+				prient_jump(spUrl('zshow','product',array('pid'=>$rs)));
+			}
+		}
+	
 	function isEdit(){
 			
 			return $_productList;
