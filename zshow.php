@@ -25,6 +25,7 @@
 			$this->shareImg = $this->returnFirstImg();
 			$this->tag = split(",",$rs['tag']);
 			$this->display('zlist.html');
+			
 		}else{
 			err404('您查看的内容可能已经修改或者删除。');	
 		}
@@ -117,11 +118,12 @@
 	function product(){
 		$pid = $this->spArgs("pid");
 		$this->productId = $pid;
-		$this->thisProductInfo = $this->_getProductInfo($pid);
-		$this->company = $this->thisProductInfo[0]['company']['company'];
+		$this->p = $this->_getProductInfo($pid);
+		$this->company = $this->p[0]['company'];
 		$this->blogInfo = $this->_getProductBlog($pid);
-		$this->sameCompanyProduct = $this->_getSameCompayProduct($this->thisProductInfo[0]['company_id']);
-		//print_r($this->blogInfo);
+		$this->sameCompanyProduct = $this->_getSameCompayProduct($this->p[0]['company_id']);
+		$this->meId = $_SESSION['uid'];
+		//print_r($this->sameCompanyProduct);exit;
 		$this->display('zproduct.html');
 	}
 	
@@ -147,6 +149,9 @@
 			$rs[$k]["fans"]['playing']=$this->getProductFans($r['id'],$spConfig['playing']);
 			$rs[$k]["fans"]['want']=$this->getProductFans($r['id'],$spConfig['want']);
 			$rs[$k]["product_id"]=$rs[$k]['id'];
+			$rs[$k]["company_id"]=$rs[$k]['company']['id'];
+			$rs[$k]["company"]=$rs[$k]['company']["company"];
+			
 		}
 	
 		return $rs;
