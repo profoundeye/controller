@@ -154,7 +154,7 @@
 	
 	function _getProductBlog($pid){
 		$db = spClass('db_blog_product');
-		$rs = $db->findAll(array("product_id"=>$pid),"blog_id desc");
+		$rs = $db->findAll(array("product_id"=>$pid,"open"=>1),"blog_id desc");
 		foreach ($rs as $key => $v) {
 			$temp =$this->_returnBlogContent($v['blog_id']);
 			if($temp[0]['type']==1)$rs["sms"][$key]["blog"]=$temp;
