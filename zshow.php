@@ -146,6 +146,7 @@
 			$rs[$k]["tags"]=$this->getThisTag($r['id'],$this->uid);
 			$rs[$k]["fans"]['playing']=$this->getProductFans($r['id'],$spConfig['playing']);
 			$rs[$k]["fans"]['want']=$this->getProductFans($r['id'],$spConfig['want']);
+			$rs[$k]["product_id"]=$rs[$k]['id'];
 		}
 	
 		return $rs;
