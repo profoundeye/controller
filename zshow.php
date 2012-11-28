@@ -169,7 +169,7 @@
 	function _returnBlogContent($bid){
 		//$sql = "SELECT * FROM `".DBPRE."blog` AS b  where b.open = 1 and b.bid = '$bid'";
 		$rs = spClass('db_blog')->spLinker('user')->findAll(array('bid'=>$bid));
-		if($rs[0]["uid"]==$_SESSION['uid'] || $rs[0]["open"]==1){
+		if($rs[0]["uid"]==$_SESSION['uid'] || $rs[0]["open"]==1||$rs[0]["type"]==1){
 			$rs['body'] = split_attribute(converPic($rs[0]['body'],",h_125"));
 			$rs['tag'] = split(",",$rs['tag']);	
 			return $rs;
