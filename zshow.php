@@ -164,8 +164,8 @@
 	}
 	
 	function _returnBlogContent($bid){
-		$sql = "SELECT * FROM `".DBPRE."blog` AS b  where b.open = 1 and b.bid = '$bid'";
-		$rs = spClass('db_blog')->spLinker('user')->findAll(array('bid'=>$bid));
+		//$sql = "SELECT * FROM `".DBPRE."blog` AS b  where b.open = 1 and b.bid = '$bid'";
+		$rs = spClass('db_blog')->spLinker('user')->findAll(array('bid'=>$bid,"open"=>1));
 		//print_r($rs);exit;
 			$rs['body'] = split_attribute(converPic($rs[0]['body'],",h_125"));
 			$rs['tag'] = split(",",$rs['tag']);	
