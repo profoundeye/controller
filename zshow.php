@@ -118,6 +118,7 @@
 	function product(){
 		$pid = $this->spArgs("pid");
 		$this->productId = $pid;
+		$this->alert = $this->spArgs("alert");
 		$this->p = $this->_getProductInfo($pid);
 		$this->company = $this->p[0]['company'];
 		$this->blogInfo = $this->_getProductBlog($pid);
@@ -181,6 +182,10 @@
 		}
     }
 	
+	function ztag(){
+		$uid = $this->spArgs("uid");
+		$tag = $this->spArgs("tid");
+	}
 
 
     }

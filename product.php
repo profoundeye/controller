@@ -95,7 +95,7 @@ class product extends top
 		$rs = $_add->create($_newRow);
 
 			if($rs){
-				prient_jump(spUrl('zshow','product',array('pid'=>$rs)));
+				prient_jump(spUrl('zshow','product',array('pid'=>$rs,'alert'=>1)));
 			}
 		}
 	
