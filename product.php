@@ -45,6 +45,7 @@ class product extends top
 		$t['bid'] = $this->spArgs('bid');	
 		//echo $this->spArgs('bid');
 		$this->p = $t;
+		$this->newShow = $this->spArgs('newShow');	
 		$this->display("newproduct.html");
 	}
 
