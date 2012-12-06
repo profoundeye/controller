@@ -102,17 +102,23 @@
 		}
 		
 		function saveTag(){
-			if($this->spArgs("action")=="buy"&&$this->checkHasTag()==true){$this->api_success("done");return false;}
+			$hasTag = $this->checkHasTag();
+			$action = $this->spArgs("action");
+			if($action=="buy"&&$hasTag==true){$this->api_success("done");return false;}
 			$pid = $this->spArgs("productId");
 			if(!is_numeric($pid)){
 				//$this->api_error("标签保存失败");	
 				return false;		
 			}
+			
+			//普通购买链接，如果是普通用户，标识想玩
+			if(($action!="jump"&&$hasTag!=true)||empty($action)){
+				//删除已有的标签对应关系 
+				$db = spClass("db_product_tag_user");
+				$data = array("user_id"=>$this->uid,"product_id"=>$this->spArgs("productId"));
+				$db->delete($data);
+			}
 
-			//删除已有的标签对应关系 
-			$db = spClass("db_product_tag_user");
-			$data = array("user_id"=>$this->uid,"product_id"=>$this->spArgs("productId"));
-			$db->delete($data);
 			//保存tag
 			$tags = $this->spArgs("tags");
 			
