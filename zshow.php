@@ -18,6 +18,7 @@
 			spClass('db_blog')->incrField(array('bid'=>$this->spArgs('bid')), 'hitcount'); 
 			
 			$this->p = $this->getProduct($this->bid);
+			
 			$this->body = split_attribute(converPic($rs['body']));
 			$this->rs = $rs;
 			$this->meId = $_SESSION['uid'];

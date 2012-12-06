@@ -2,10 +2,19 @@
     class tagit extends top{
     	function __construct(){  
        		parent::__construct(); 
-			$this->needLogin();
+			if($this->spArgs('action')!='buy'){
+				$this->needLogin();
+			}else{
+				if(!$_SESSION['uid']){
+					$this->api_error("<img src=\"tplv2/image/z/buyz.png\" />右侧标识说明此商品对zplaying的用户有特殊优惠,请您<a href=\"".spUrl("main","login")."\">点击这里登录</a>");
+					return;
+				}
+			}
+			
     	}
 		
 		function thisplaying(){
+			
 			//$this->api_success(is_avatar_path($_SESSION['uid']));exit;
 			if(!is_avatar_path($_SESSION['uid'])){
 				$this->api_error("您还没有上传头像呢,有一个头像，看上去会更酷。<a href=\"".spUrl("user","setting")."\">点击这里上传</a>");
@@ -80,7 +89,20 @@
 			return $rs;			
 		}
 		
+		function checkHasTag(){
+			//校验当前用户是否已经打过标签，如果打过标签，在点购买链接时不再标识标签
+			$db = spClass("db_product_tag_user");
+			$data = array("user_id"=>$this->uid,"product_id"=>$this->spArgs("productId"));
+			$rs = $db->find($data);
+			if($rs){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
 		function saveTag(){
+			if($this->spArgs("action")=="buy"&&$this->checkHasTag()==true){$this->api_success("done");return false;}
 			$pid = $this->spArgs("productId");
 			if(!is_numeric($pid)){
 				//$this->api_error("标签保存失败");	
@@ -93,8 +115,10 @@
 			$db->delete($data);
 			//保存tag
 			$tags = $this->spArgs("tags");
+			
 			if(empty($tags)){$tags="想玩";}
-			$tags = split(" ", $this->spArgs("tags"));
+			$tags = split(" ", $tags);
+
 			foreach($tags as $t){
 				if(!empty($t)){
 					$db = spClass("db_producttags");
@@ -111,14 +135,16 @@
 					$rs = $db->find($data);
 					if(!$rs){
 						$rs = $db->create($data);
+						
 					}				
 					if($rs===false){
 						$this->api_error("标签保存失败");
 					}
+					
 				}
 				
 			}			
-			
+			$this->api_success("done");
 		}
 		
 		function test(){echo "ok";}

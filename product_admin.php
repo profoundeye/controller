@@ -13,8 +13,16 @@ class product_admin extends product{
 	
 	function productList(){
 		$db = spClass('db_product');
-		$rs = $this->db->spLinker()->spPager($this->spArgs('page', 1), 20)->findAll("",'id desc');
+		$rs = $this->db->spLinker()->spPager($this->spArgs('page', 1), 30)->findAll("",'id desc');
+		
+		 if($this->spArgs('submit')){
+            $this->pager = spClass('db_blog')->spPager()->pagerHtml('product_admin', 'productList', array('title' => $title, 'niname' => $niname, 'submit' => $this->spArgs('submit')));
+        }else{
+            $this->pager = spClass('db_blog')->spPager()->pagerHtml('product_admin', 'productList');
+        }
+		
 		$this->product = $rs;
+		
 		$this->display('admin/product.html');
 	}
 	
@@ -36,8 +44,12 @@ class product_admin extends product{
 						"info"=>$this->spArgs('info'),
 						"buy_url"=>$this->spArgs('buy_url'),
 						"pass"=>$this->spArgs('pass'),
+						"buy_dec"=>$this->spArgs('buy_dec')
 					);
+					
+					
 		$this->db->spLinker()->update(array("id"=>$this->spArgs('id')),$_newRow);
+	
 		header('Location:'.spUrl('product_admin','productList'));
 	}
 	

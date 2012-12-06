@@ -53,6 +53,13 @@ class product extends top
 	function newProduct(){
 		//todo blogid没有写入
 		//首先保存公司信息，如果没有，新增，返回公司id，如果有，返回公司id
+		$year =  trim($this->spArgs('year'));
+		$style =  trim($this->spArgs('style'));
+		$info =  trim($this->spArgs('info'));
+		
+		if(empty($year)||empty($style)||empty($info)){
+			return false;
+		}
 		$companyId = $this->processCompany($this->spArgs('company'));
 		//保存产品信息
 		$_add = spClass('db_product');
@@ -62,6 +69,7 @@ class product extends top
 						"style"=>$this->spArgs('style'),
 						"info"=>$this->spArgs('info'),	
 					);
+					
 	
 
 		$rs = $_add->create($_newRow);
