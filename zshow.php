@@ -184,10 +184,38 @@
     }
 	
 	function ztag(){
+		/*传入两个参数，username\tagName 两个可以任意传递，或者2选一，
+		 * username时，显示当前用户下全部标签，header上显示用户基本信息
+		 * tagName时，显示tag该tag下全部的商品。tag分两种，文章tag ：atag，想玩，在玩标签tag。
+		 * 如果什么参数都没有，默认跑最新的文章中涉及到的产品
+		 * limit返回多少条数据，page翻页
+		 */
 		$uid = $this->spArgs("uid");
 		$tag = $this->spArgs("tid");
+		
+		//最新的产品
+		$db = spClass("db_blog_product");
+		//$sql ="SELECT distinct(product_id),img,style,year,info,buy_url,buy_dec,blog_id FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id limit 20 ";
+		$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' limit 20 ";
+		$this->p = $db->findSql($sql);
+		print_r($rs);
+		$this->display('ztag.html');
 	}
 
 
+	
+	function imgKey(){
+		$this->needLogin();
+		$path = $this->spArgs("path");
+		$pid = $this->spArgs("pid");	
+		//path=http://localhost/testyunbian/attachs/12/10/16/26/eec36b7db1efba67d9a7ff3ab9bf60e7.jpg&pid=10
+		$data = array("pid"=>$pid,"img"=>$path);
+
+		$db = spClass("db_product");
+		
+		$rs = $db->updateField(array("id"=>$pid),"img",$path);
+		var_dump($rs);
+	}
+	
     }
 ?>
