@@ -196,7 +196,7 @@
 		//最新的产品
 		$db = spClass("db_blog_product");
 		//$sql ="SELECT distinct(product_id),img,style,year,info,buy_url,buy_dec,blog_id FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id limit 20 ";
-		$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>''";
+		$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' order by id desc";
 		$this->p = $db->spPager($this->spArgs('page', 1), 15)->findSql($sql);
 		$this->pager = $db->spPager()->pagerHtml("zshow","ztag");
 		//print_r($rs);
