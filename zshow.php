@@ -225,7 +225,7 @@
 		
 		if($tag&&$uname){
 			$uid = $this->_returnSomeInfo($uname,"");
-			$sql ="SELECT distinct(".DBPRE."product.id),img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id  and  ".DBPRE."product_tag_user.user_id=".$uid['uid']." and ".DBPRE."product_tag_user.tag_id=".$tagId['id']." and ".DBPRE."product_tag_user.product_id=".DBPRE."product.id  order by id desc";	
+			$sql ="SELECT distinct(".DBPRE."product.id),img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id  and img<>''  and  ".DBPRE."product_tag_user.user_id=".$uid['uid']." and ".DBPRE."product_tag_user.tag_id=".$tagId['id']." and ".DBPRE."product_tag_user.product_id=".DBPRE."product.id  order by id desc";	
 			
 			$pageSpr = array("uname"=>$uname,"tag"=>$tag);
 
