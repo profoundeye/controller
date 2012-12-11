@@ -183,27 +183,76 @@
 		}
     }
 	
-	function ztag(){
+	function me(){
+		$uname = $this->spArgs("uname");
+		if($uname){
+			$uid = $this->_returnSomeInfo($uname,"");
+			$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company,tag_id,tag FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."producttags,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' and ".DBPRE."product_tag_user.user_id=".$uid['uid']." and ".DBPRE."product_tag_user.tag_id= ".DBPRE."producttags.id  order by id desc";			
+		};
+		$this->p = $db->spPager($this->spArgs('page', 1), 15)->findSql($sql);
+		$this->pager = $db->spPager()->pagerHtml("zshow","ztag");
+		if($tag||$uname){
+			foreach ($this->p as $k => $p){
+				if($p['tag']=="想玩"){					
+					$l["想玩"] = $p;
+				}else if($p['tag']=="在玩"){					
+					$l["在玩"] = $p;
+				}else{
+					$temp[$p['tag']][]=$p;
+				}				
+			}			
+			$this->p = array_merge($l,$temp);
+		}	
+
+		$this->display('ztag.html');
+	}
+	
+	function explorer(){
 		/*传入两个参数，username\tagName 两个可以任意传递，或者2选一，
 		 * username时，显示当前用户下全部标签，header上显示用户基本信息
 		 * tagName时，显示tag该tag下全部的商品。tag分两种，文章tag ：atag，想玩，在玩标签tag。
 		 * 如果什么参数都没有，默认跑最新的文章中涉及到的产品
 		 * limit返回多少条数据，page翻页
 		 */
-		$uid = $this->spArgs("uid");
-		$tag = $this->spArgs("tid");
+		$uname = $this->spArgs("uname");
+		$tag = $this->spArgs("tag");
+	
+		if($tag){
+			$tagId = $this->_returnSomeInfo("",$tag);
+			$sql ="SELECT distinct(".DBPRE."product.id),img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' and ".DBPRE."product_tag_user.tag_id=".$tagId['id']."  order by id desc";	
+		};
+		
+		if($tag&&$uname){
+			$uid = $this->_returnSomeInfo($uname,"");
+			$sql ="SELECT distinct(".DBPRE."product.id),img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' and ".DBPRE."product_tag_user.user_id=".$uid['uid']." and ".DBPRE."product_tag_user.tag_id=".$tagId['id']."  order by id desc";	
+
+		}
+		
+		if(!$tag&&!$uname){
+			$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' order by id desc";			
+		}
+		
 		
 		//最新的产品
 		$db = spClass("db_blog_product");
-		//$sql ="SELECT distinct(product_id),img,style,year,info,buy_url,buy_dec,blog_id FROM ".DBPRE."product,".DBPRE."blog_product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and ".DBPRE."product.id = ".DBPRE."blog_product.product_id limit 20 ";
-		$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' order by id desc";
-		$this->p = $db->spPager($this->spArgs('page', 1), 15)->findSql($sql);
-		$this->pager = $db->spPager()->pagerHtml("zshow","ztag");
-		//print_r($rs);
+		$p[$tag] = $db->spPager($this->spArgs('page', 1), 15)->findSql($sql);
+		$this->pager = $db->spPager()->pagerHtml("zshow","ztag");		
+		$this->p = $p;
 		$this->display('ztag.html');
 	}
 
-
+	function _returnSomeInfo($uname,$tag){
+		if($uname){
+			$db = spClass("db_member");
+			$rs= $db->find(array('username'=>$uname),"","uid");
+		}
+		if($tag){
+			$db = spClass("db_producttags");
+			$rs = $db->find(array('tag'=>$tag),"","id");
+		}	
+		
+		if($rs){return $rs;}else{exit;}
+	}
 	
 	function imgKey(){
 		$this->needLogin();
