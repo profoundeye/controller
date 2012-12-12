@@ -192,25 +192,23 @@
 		
 		
 		//获取当前用户全部标签tag
-		$sql ="SELECT distinct(tag) FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."producttags WHERE ".DBPRE."product_tag_user.user_id=".$uid." and ".DBPRE."product_tag_user.tag_id= ".DBPRE."producttags.id";	
+		$sql ="SELECT distinct(tag),tag_id FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."producttags WHERE ".DBPRE."product_tag_user.user_id=".$uid." and ".DBPRE."product_tag_user.tag_id= ".DBPRE."producttags.id";	
 		$this->tags =$db->findSql($sql);
 		
-		//返回想玩在玩商品信息
-		if($uname){			
-			
-			$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company,tag_id,tag FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."producttags,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' and ".DBPRE."product_tag_user.user_id=".$uid['uid']." and ".DBPRE."product_tag_user.tag_id= ".DBPRE."producttags.id  order by id desc";			
+		//根据tag返回想玩在玩商品信息
+		if($uname){
+			foreach($this->tags as $t){
+				$sql ="SELECT distinct(".DBPRE."product.id),img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id  and img<>''  and  ".DBPRE."product_tag_user.user_id=".$uid." and ".DBPRE."product_tag_user.tag_id=".$t['tag_id']." and ".DBPRE."product_tag_user.product_id=".DBPRE."product.id  order by id desc limit 9";				
+				$pp[$t['tag']]=$db->findSql($sql);
+			}		
 		};
-		$db = spClass("db_member");
-		
-		$this->p = $db->findSql($sql);
-	
-			foreach ($this->p as $k => $p){
-				if($p['tag']=="想玩"){					
-					$l["想玩"][] = $p;
-				}else if($p['tag']=="在玩"){					
-					$l["在玩"][] = $p;
+			foreach ($pp as $k => $p){
+				if($k=="想玩"){					
+					$l["想玩"]= $p;
+				}else if($k=="在玩"){					
+					$l["在玩"] = $p;
 				}else{
-					$temp[$p['tag']][]=$p;
+					$temp[$k]=$p;
 				}	
 							
 			}				
@@ -225,7 +223,7 @@
 			}
 		}
 		
-
+//print_r($this->p);exit;
 		$this->display('ztag.html');
 	}
 	
