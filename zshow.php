@@ -83,7 +83,9 @@
 		$rs = $db->spLinker()->findAll(array("product_id"=>$productId,"user_id"=>$uid),"tag_id desc","",10);
 		foreach ($rs as $k => $v) {
 			if($v['producttags'][0]['tag']!='在玩'&&$v['producttags'][0]['tag']!='想玩'){
-				$str['tags'].="<span>".$v['producttags'][0]['tag']."</span>";
+				$str['tags'].="<span><a href=\""
+				.spUrl("zshow","explorer",array('tag'=>$v['producttags'][0]['tag'],'uname'=>$_SESSION['username'])).
+				"\">".$v['producttags'][0]['tag']."</a></span>";
 			}else{
 				$str['playing'] = $v['producttags'][0]['tag'];
 			}			
@@ -222,7 +224,7 @@
 				$this->p = $temp;
 			}
 		}
-		
+		$this->tagMore= 1;
 //print_r($this->p);exit;
 		$this->display('ztag.html');
 	}
@@ -259,7 +261,7 @@
 			$pageSpr = "";			
 		}
 		
-		
+		$this->more = 1;
 		//最新的产品
 		$db = spClass("db_blog_product");
 		$p[$tag] = $db->spPager($this->spArgs('page', 1), 15)->findSql($sql);
