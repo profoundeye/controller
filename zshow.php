@@ -188,6 +188,8 @@
 	function me(){
 		//返回头像信息。
 		$uname = $this->spArgs("uname");
+				$uname = urldecode ($uname);
+	
 		$db = spClass("db_member");
 		$this->userinfo = $db->find(array('username'=>$uname),"","uid,username,source,sign");
 		$uid = $this->userinfo['uid'];
@@ -238,6 +240,8 @@
 		 */
 		$uname = $this->spArgs("uname");
 		$tag = $this->spArgs("tag");
+		$uname = urldecode ($uname);
+		$tag = urldecode ($tag);
 	
 		if($tag){
 			$tagId = $this->_returnSomeInfo("",$tag);
