@@ -244,7 +244,7 @@
 		$tag = urldecode ($tag);
 	
 		if($tag){
-			$tagId = $this->_returnSomeInfo("",$tag);
+			$tagId = $this->_returnSomeInfo("",$tag); 
 			$sql ="SELECT distinct(".DBPRE."product.id),img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."product_tag_user,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' and ".DBPRE."product_tag_user.tag_id=".$tagId['id']."  and ".DBPRE."product_tag_user.product_id=".DBPRE."product.id   order by id desc";
 			$pageSpr = array("tag"=>$tag);
 		};
@@ -262,14 +262,14 @@
 		
 		if(!$tag&&!$uname){
 			$sql ="SELECT ".DBPRE."product.id,img,style,year,info,buy_url,buy_dec,company FROM ".DBPRE."product,".DBPRE."company WHERE ".DBPRE."company.id=".DBPRE."product.company_id and img<>'' order by id desc";
-			$pageSpr = "";			
+			$pageSpr = array();			
 		}
 		
 		$this->more = 1;
 		//最新的产品
 		$db = spClass("db_blog_product");
 		$p[$tag] = $db->spPager($this->spArgs('page', 1), 15)->findSql($sql);
-		$this->pager = $db->spPager()->pagerHtml("zshow","explorer",$pageSpr);		
+		$this->pager = $db->spPager()->pagerHtml("zshow","explorer",$pageSpr);	
 		$this->p = $p;
 		$this->display('ztag.html');
 	}
