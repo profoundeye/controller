@@ -84,7 +84,7 @@ class mybuy extends top{
 			require_once("init/Extensions/saetv2.ex.class.php");
 			define( "WB_AKEY" , '3006371478' );
 			define( "WB_SKEY" , 'aa834a7e199a288d0faa88286da01b13' );
-			define( "WB_CALLBACK_URL" , 'http://zplaying.com/testyunbian/index.php?c=mybuy&a=callback' );
+			define( "WB_CALLBACK_URL" , 'http://www.zplaying.com/index.php?c=mybuy&a=callback' );
 			$this->o = new SaeTOAuthV2( WB_AKEY , WB_SKEY);
 	}
 	
