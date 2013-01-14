@@ -104,14 +104,16 @@ class mybuy extends top{
 				$d[$k]['pic']=$r->original_pic;
 				$d[$k]['text']=$r->text;
 				$d[$k]['weiboid']=(string)$r->idstr;
+				$d[$k]['weibonick']=$r->user->name;
 			}else{
 				if($r->retweeted_status->original_pic){
 					$d[$k]['pic']=$r->retweeted_status->original_pic;
 					$d[$k]['text']=$r->retweeted_status->text;
 					$d[$k]['weiboid']=(string)$r->retweeted_status->idstr;
+					$d[$k]['weibonick']=$r->retweeted_status->user->name;
 				}				
 			}
-			$d[$k]['weibonick']=$r->user->name;
+
 			$d[$k]['url']=$r->user->domain?"http://weibo.com/u/".$r->user->domain:"http://weibo.com/u/".$r->user->id;
 			
 		}
@@ -146,6 +148,7 @@ class mybuy extends top{
 		$db = spClass('db_mybuy');
 		do{
 			//print_r($tmp[$realPage]);exit;
+			rsort($tmp[$realPage]);
 			foreach ($tmp[$realPage] as $k => $v) {
 				if(!$db->find(array('weiboid'=>$v['weiboid']))&&!empty($v['pic']))
 				$rs = $db->create($v);
