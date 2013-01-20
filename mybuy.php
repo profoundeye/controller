@@ -162,7 +162,7 @@ class mybuy extends top{
 	
 	//通知用户
 	function notice($weibonick,$id){
-		$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/".$weibonick;
+		$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/".urlencode($weibonick);
 		$p['access_token']=$this->get_accesstoken();
 		$p['id']=$id;
 		$url="https://api.weibo.com/2/comments/create.json";
