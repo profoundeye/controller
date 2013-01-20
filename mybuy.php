@@ -53,6 +53,8 @@ class mybuy extends top{
 		$id = $this->spArgs("id");
 		$db=spClass("db_mybuy");
 		$rs = $db->update(array("id"=>$id),array("status"=>1));
+		$rs = $db->find(array("id"=>$id));
+		$this->notice($rs['weibonick'],$rs['weiboid']);
 		$this->show_adminList();
 	}
 	
@@ -148,7 +150,7 @@ class mybuy extends top{
 		$db = spClass('db_mybuy');
 		do{
 			//print_r($tmp[$realPage]);exit;
-			rsort($tmp[$realPage]);
+			arsort($tmp[$realPage]);
 			foreach ($tmp[$realPage] as $k => $v) {
 				if(!$db->find(array('weiboid'=>$v['weiboid']))&&!empty($v['pic']))
 				$rs = $db->create($v);
@@ -158,6 +160,16 @@ class mybuy extends top{
 		}while($realPage>1);
 	}
 	
+	//通知用户
+	function notice($weibonick,$id){
+		$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/".$weibonick;
+		$p['access_token']=$this->get_accesstoken();
+		$p['id']=$id;
+		$url="https://api.weibo.com/2/comments/create.json";
+		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
+		$rs = json_decode($result);	
+	}
+	
 	function returnSinceid(){
 		$db = spClass('db_mybuy');
 		$sql = "select weiboid as a from ".DBPRE."mybuy order by id desc limit 1";
@@ -165,6 +177,21 @@ class mybuy extends top{
 		if(empty($rs[a])){$rs[a]=0;}
 		return (string)$rs[a];
 	}
+	
+	function show(){
+		$n = urldecode($this->spArgs("n"));
+		$db = spClass('db_mybuy');
+		$rs = $db->findAll(array("weibonick"=>$n,"status"=>1));
+		foreach($rs as $r){
+			$t = (string)date("Y-m-d",strtotime($r['time'])) ;
+			$m[$t][]=$r;
+		}
+		$this->n = $n;
+		$this->m=$m;
+		$this->display("theme/default/mybuy.html");
+	}
+	
+
 	
 	
 }
