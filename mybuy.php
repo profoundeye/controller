@@ -181,7 +181,7 @@ class mybuy extends top{
 	function show(){
 		$n = urldecode($this->spArgs("n"));
 		$db = spClass('db_mybuy');
-		$rs = $db->findAll(array("weibonick"=>$n,"status"=>1));
+		$rs = $db->findAll(array("weibonick"=>$n,"status"=>1),"time desc");
 		foreach($rs as $r){
 			$t = (string)date("Y-m-d",strtotime($r['time'])) ;
 			$m[$t][]=$r;
