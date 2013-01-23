@@ -181,13 +181,21 @@ class mybuy extends top{
 	function show(){
 		$n = urldecode($this->spArgs("n"));
 		$db = spClass('db_mybuy');
-		$rs = $db->findAll(array("weibonick"=>$n,"status"=>1),"time desc");
+		if($n){
+			$cond = array("weibonick"=>$n,"status"=>1);
+		}else{
+			$cond = array("status"=>1);
+		}
+		
+		$rs = $db->spPager($this->spArgs('page', 1), 20)->findAll($cond,"time desc");
+		$this->pager = $db->spPager()->getPager();
 		foreach($rs as $r){
 			$t = (string)date("Y-m-d",strtotime($r['time'])) ;
 			$m[$t][]=$r;
 		}
-		$this->n = $n;
+		$this->n = $n?$n:'大家的';
 		$this->m=$m;
+		//print_r($this->pager);exit;
 		$this->display("theme/default/mybuy.html");
 	}
 	
