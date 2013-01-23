@@ -181,7 +181,7 @@ class mybuy extends top{
 	function show(){
 		$n = urldecode($this->spArgs("n"));
 		$db = spClass('db_mybuy');
-		if($n&&$n!='大家的'){
+		if($n&&$n!='大家'){
 			$cond = array("weibonick"=>$n,"status"=>1);
 		}else{
 			$cond = array("status"=>1);
