@@ -99,7 +99,10 @@ class mybuy extends top{
 		$url="https://api.weibo.com/2/statuses/mentions.json";
 		$result = SaeTOAuthV2::oAuthRequest($url,"GET",$p);
 		$rs = json_decode($result);	
-		//print_r($rs);exit;
+		if($rs->error){
+			echo $rs->error;
+			exit;
+		}
 		
 		foreach($rs->statuses as $k=>$r){
 			if($r->original_pic){
@@ -131,6 +134,7 @@ class mybuy extends top{
 			return;
 		}
 		$since_id = $this->returnSinceid()?$this->returnSinceid():"3533646079859847";
+		echo "newest id:".$since_id;
 		//$since_id ='3533762572679178';
 		//测试最大分页
 		$page=1;
@@ -146,13 +150,14 @@ class mybuy extends top{
 		//存储
 		
 		$realPage = $page-1;
+		echo "max page:$realPage";
 	//echo "get maxpage:$realPage ok";
 		$db = spClass('db_mybuy');
 		do{
-			//print_r($tmp[$realPage]);exit;
 			arsort($tmp[$realPage]);
 			foreach ($tmp[$realPage] as $k => $v) {
 				if(!$db->find(array('weiboid'=>$v['weiboid']))&&!empty($v['pic']))
+				//print_r($v);
 				$rs = $db->create($v);
 			}	
 			//确定是否有非重复数据				
@@ -162,12 +167,13 @@ class mybuy extends top{
 	
 	//通知用户
 	function notice($weibonick,$id){
-		//$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
-		$p['status']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
-		$p['is_comment']=3;
+		$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
+		//$p['status']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
+		//$p['is_comment']=3;
 		$p['access_token']=$this->get_accesstoken();
 		$p['id']=$id;
-		$url="https://api.weibo.com/2/statuses/repost.json";
+		//$url="https://api.weibo.com/2/statuses/repost.json";
+		$url="https://api.weibo.com/2/comments/create.json";
 		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
 		$rs = json_decode($result);	
 	}
@@ -176,8 +182,8 @@ class mybuy extends top{
 		$db = spClass('db_mybuy');
 		$sql = "select weiboid as a from ".DBPRE."mybuy order by id desc limit 1";
 		$rs = $db->findSql($sql);
-		if(empty($rs[a])){$rs[a]=0;}
-		return (string)$rs[a];
+		if(empty($rs[0][a])){$rs[0][a]=0;}
+		return (string)$rs[0][a];
 	}
 	
 	function show(){
