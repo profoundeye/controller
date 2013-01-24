@@ -162,10 +162,12 @@ class mybuy extends top{
 	
 	//通知用户
 	function notice($weibonick,$id){
-		$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
+		//$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
+		$p['status']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
+		$p['is_comment']=3;
 		$p['access_token']=$this->get_accesstoken();
 		$p['id']=$id;
-		$url="https://api.weibo.com/2/comments/create.json";
+		$url="https://api.weibo.com/2/statuses/repost.json";
 		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
 		$rs = json_decode($result);	
 	}
