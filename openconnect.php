@@ -20,15 +20,18 @@ class openconnect extends top
 	{
 		if($this->yb['openlogin_qq_open'] == 0){exit('系统管理员没有开启QQ登陆功能');}
 		$this->app = 'qq';
+		//设置appkey等参数
 		spClass('qqConnect')->init($this->yb['openlogin_qq_appid'],$this->yb['openlogin_qq_appkey'],$this->yb['openlogin_qq_callback']);
-		
+		//第一次执行，没有callback，跳转到授权地址。然后跳转回来，进行授权
 		if($this->spArgs('callback'))
 		{
+			//如果授权完成，回调函数，设置相关access_token到session，然后跳转到login方法
 			if(spClass('qqConnect')->LoginCallback()){	header("Location:index.php?c=openconnect&a=qq&login=yes");}	exit;
 		}
 		
 		if($this->spArgs('login'))
 		{
+			//如果执行这里，说明授权已经完成，相关信息写到session
 			if(!$_SESSION['qq']['openid']){exit('登陆状态失效,请重新登陆');}
 			$type = 'QQ';  //获取类型为QQ
 			$this->user = $_SESSION['qq'];
@@ -76,8 +79,9 @@ class openconnect extends top
 			}
 			
 		
-
+			//首先查看此用户是否存在
 			$user = spClass('db_memberex')->spLinker()->find(array('openid'=>$this->user['openid'])); //获取用户数据
+			//是否超时
 			if($user['expires'] != 0 && time() > $user['expires'])
 			{
 				$msg = '您的绑定信息与'.date('Y-m-d',$user['expires']).'已过期，请您重新使用连接功能，并绑定已有账号。';
@@ -88,7 +92,7 @@ class openconnect extends top
 			}
 
 			if($user)
-			{
+			{//如果存在，而且关联了账号，直接开始登陆。
 				$this->setLoginInfo($user['user']);
 				$this->jslocation(spUrl('main','index'));
 			}else{
@@ -97,7 +101,7 @@ class openconnect extends top
 			}
 		exit;
 		}
-		
+		//跳转到授权地址
 		spClass('qqConnect')->getLoginUrl();
 	}
 	
@@ -107,95 +111,96 @@ class openconnect extends top
 		if($this->yb['openlogin_weib_open'] == 0){exit('系统管理员没有开启微博登陆功能');}
 		$this->app = 'weibo';
 		spClass('sinaConnect')->init($this->yb['openlogin_weib_appid'],$this->yb['openlogin_weib_appkey'],$this->yb['openlogin_weib_callback']);
-		
-		if($this->spArgs('callback'))
-		{
-			if(spClass('sinaConnect')->LoginCallback()){	header("Location:index.php?c=openconnect&a=weib&login=yes");}	exit;
+		spClass('sinaConnect')->goLoginUrl();
+	}
+	
+	function weiboCallback(){
+		$obj = spClass('sinaConnect');
+		$obj->init($this->yb['openlogin_weib_appid'],$this->yb['openlogin_weib_appkey'],$this->yb['openlogin_weib_callback']);
+		//获取acesstoken
+		$obj->callBack();
+		//校验数据库中是否已经授权过
+		$user = $this->is_member($_SESSION['weibo']['openid']);
+		if($user){
+			//如过有，写入登陆信息,并跳转
+			$this->setLoginInfo($user['user']);
+			echo "账户已经存在，登陆完成";
+			$this->jslocation(spUrl('main','index'));
+		}else{
+			//调用绑定界面
+			$this->displayLoginHtml('weibo');
+		}
+		//$this->if_login($type,$_SESSION['weibo']);
+			
+		//如果没有，注册
+				
+	}
+	
+	function displayLoginHtml($app="",$type=""){
+		$this->app=$app?$app:$this->spArgs("app");
+		$this->type = $type?$type:$this->spArgs("type");
+		$this->display('oauth/login.html');
+	}
+	
+	function newMember(){
+		$app=$this->spArgs('app');
+		$userobj = spClass('db_member'); //验证注册
+		$userobj->verifier = $userobj->verifier_openConnect_Reg; 
+		if( false == $userobj->spVerifier($this->spArgs()) ){  
+			$uid = $userobj->userReg($this->spArgs());
+			$params = array('openid' => $_SESSION[$app]['openid'],
+							'token'  => $_SESSION[$app]['oauth_token'],
+							'types'  => $app,
+							'uid'    => $uid,
+							'expires'=> $_SESSION[$app]['expires']
+			);
+			
+			$this->activeLogin($params);
+			$user=$this->is_member($_SESSION[$app]['openid']);
+			$this->setLoginInfo($user['user']);
+			if($this->spArgs('face')) $this->getUserFace($this->user['pic'],$_SESSION['uid']);
+			//
+		}else{
+			$this->errmsg_arr = $userobj->spVerifier($this->spArgs());
+			$this->displayLoginHtml($app);
 		}
 		
-		if($this->spArgs('login'))
-		{
-			if(!$_SESSION['sina']['openid']){exit('登陆状态失效,请重新登陆');}
-			$type = 'WEIBO';  //获取类型为QQ
-			$this->user = $_SESSION['weibo'];
-			$this->type = $this->spArgs('type','reg');
-
-			$this->if_login($type,$_SESSION['weibo']);
-			
-			if($this->spArgs('linkSubmit'))
-			{
-				if($this->spArgs('type') != 'login')
-				{
-					$userobj = spClass('db_member'); //验证注册
-					$userobj->verifier = $userobj->verifier_openConnect_Reg; 
-					if( false == $userobj->spVerifier($this->spArgs()) ){  
-						$uid = $userobj->userReg($this->spArgs());
-						$params = array('openid' => $_SESSION['weibo']['openid'],
-										'token'  => $_SESSION['weibo']['oauth_token'],
-										'types'  => $type,
-										'uid'    => $uid,
-										'expires'=> $_SESSION['weibo']['expires']
-						);
-						$this->activeLogin($params);
-						if($this->spArgs('face')) $this->getUserFace($this->user['pic'],$uid);
-						$this->jslocation(spUrl('main','index'));
-					}else{
-						$this->errmsg_arr = $userobj->spVerifier($this->spArgs());	
-					}
-				}else{
-					$userobj = spClass('db_member'); //验证登陆
+	}
+	
+	function bindingMember(){
+		$app=$this->spArgs('app');
+		$userobj = spClass('db_member'); //验证登陆
 					$userobj->verifier = $userobj->verifier_openConnect_Login; 
 					if( false == $userobj->spVerifier($this->spArgs()) ){ 
-						$params = array('openid' => $_SESSION['weibo']['openid'],
-										'token'  => $_SESSION['weibo']['oauth_token'],
-										'types'  => $type,
-										'uid'    => $_SESSION['weibo'],
-										'expires'=> $_SESSION['weibo']['expires']
+						$params = array('openid' => $_SESSION[$app]['openid'],
+										'token'  => $_SESSION[$app]['oauth_token'],
+										'types'  => $app,
+										'uid'    => $_SESSION['uid'],
+										'expires'=> $_SESSION[$app]['expires']
 						);
 						$this->activeLogin($params);
+						$user=$this->is_member($_SESSION[$app]['openid']);
+						$this->setLoginInfo($user['user']);
 						if($this->spArgs('face')) $this->getUserFace($this->user['pic'],$_SESSION['uid']);
 						$this->jslocation(spUrl('main','index'));
 					}else{
 						$this->errmsg_arr = $userobj->spVerifier($this->spArgs());	
+						$this->displayLoginHtml($app,"blinding");
 					}
-				}
-			}
-			
-		
-
-			$user = spClass('db_memberex')->spLinker()->find(array('openid'=>$this->user['openid'])); //获取用户数据
-			if($user['expires'] != 0 && time() > $user['expires'])
-			{
-				$msg = '您的绑定信息与'.date('Y-m-d',$user['expires']).'已过期，请您重新使用连接功能，并绑定已有账号。';
-				spClass('db_memberex')->CancelBind($type,$_SESSION['uid']);
-				unset($_SESSION['openconnect'][$type]);
-				spClass('db_memberex')->delete(array('openid'=>$this->user['openid']));
-				$this->error($msg,spUrl('main','index'));
-			}
-
-			if($user)
-			{
-				$this->setLoginInfo($user['user']);
-				$this->jslocation(spUrl('main','index'));
-			}else{
-				//如果不存在 提示绑定
-				$this->display('oauth/login.html');
-			}
-		exit;
-		}
-		
-		spClass('sinaConnect')->getLoginUrl();
 	}
 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
+	function is_member($openid){
+		$user = spClass('db_memberex')->spLinker()->find(array('openid'=>$openid)); //获取用户数据
+		if($user){
+			return $user;
+		}else{
+			return false;
+		}
+	}
 	
 	
 	/*检查是否已经登录*/
@@ -211,13 +216,7 @@ class openconnect extends top
 			$this->activeLogin($params);
 			$this->jslocation(spUrl('main','index'));
 		}
-	}
-	
-	
-	
-	
-	
-	
+	}	
 	
 	
 	/*写入登陆信息*/
