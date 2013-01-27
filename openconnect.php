@@ -159,8 +159,8 @@ class openconnect extends top
 			$this->activeLogin($params);
 			$user=$this->is_member($_SESSION[$app]['openid']);
 			$this->setLoginInfo($user['user']);
-			if($this->spArgs('face')) $this->getUserFace($this->user['pic'],$_SESSION['uid']);
-			//
+			if($this->spArgs('face')) $this->getUserFace($_SESSION[$app]["userinfo"]['avatar'],$uid);
+			$this->jslocation(spUrl('mybuy','show'));
 		}else{
 			$this->errmsg_arr = $userobj->spVerifier($this->spArgs());
 			$this->displayLoginHtml($app);
@@ -183,8 +183,8 @@ class openconnect extends top
 						$this->activeLogin($params);
 						$user=$this->is_member($_SESSION[$app]['openid']);
 						$this->setLoginInfo($user['user']);
-						if($this->spArgs('face')) $this->getUserFace($this->user['pic'],$_SESSION['uid']);
-						$this->jslocation(spUrl('main','index'));
+						if($this->spArgs('face')) $this->getUserFace($_SESSION[$app]["userinfo"]['avatar'],$_SESSION['uid']);
+						$this->jslocation(spUrl('mybuy','show'));
 					}else{
 						$this->errmsg_arr = $userobj->spVerifier($this->spArgs());	
 						$this->displayLoginHtml($app,"blinding");
