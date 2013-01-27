@@ -188,25 +188,41 @@ class mybuy extends top{
 	
 	function show(){
 		$n = urldecode($this->spArgs("n"));
+		//获取全部商品
 		$db = spClass('db_mybuy');
-		if($n&&$n!='大家'){
-			$cond = array("weibonick"=>$n,"status"=>1);
-		}else{
-			$cond = array("status"=>1);
-		}
 		
-		$rs = $db->spPager($this->spArgs('page', 1), 10)->findAll($cond,"time desc");
-		$this->pager = $db->spPager()->getPager();
-		foreach($rs as $r){
-			$t = (string)date("Y-m-d",strtotime($r['time'])) ;
-			$m[$t][]=$r;
+		if(!$this->spArgs("tagId")){
+			if($n&&$n!='大家'){
+				$cond = array("weibonick"=>$n,"status"=>1);
+			}else{
+				$cond = array("status"=>1);
+			}
+			
+			$rs = $db->spPager($this->spArgs('page', 1), 10)->findAll($cond,"time desc");
+			$this->pager = $db->spPager()->getPager();
+					
+		}else{
+			$rs = $db->returnTagGoods($this->spArgs("tagId"));
+			
 		}
-		$this->n = $n?$n:'大家';
-		$this->m=$m;
+			$this->n = $n?$n:'大家';
+			foreach($rs as $r){
+				$t = (string)date("Y-m-d",strtotime($r['time'])) ;
+				$m[$t][]=$r;
+			}
+			$this->m=$m;	
+		//print_r($this->m);exit;
+
 		//print_r($this->pager);exit;
+		
+		//获取全部tag
+		$this->tagList = $db->returnUserTags($n);
 		$this->display("theme/default/mybuy.html");
 	}
 	
+	function showHisList(){
+		
+	}
 
 	
 	

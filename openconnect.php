@@ -152,7 +152,8 @@ class openconnect extends top
 							'token'  => $_SESSION[$app]['oauth_token'],
 							'types'  => $app,
 							'uid'    => $uid,
-							'expires'=> $_SESSION[$app]['expires']
+							'expires'=> $_SESSION[$app]['expires'],
+							'name'=>$_SESSION[$app]['name']
 			);
 			
 			$this->activeLogin($params);
@@ -176,7 +177,8 @@ class openconnect extends top
 										'token'  => $_SESSION[$app]['oauth_token'],
 										'types'  => $app,
 										'uid'    => $_SESSION['uid'],
-										'expires'=> $_SESSION[$app]['expires']
+										'expires'=> $_SESSION[$app]['expires'],
+										'name'=>$_SESSION[$app]['name']
 						);
 						$this->activeLogin($params);
 						$user=$this->is_member($_SESSION[$app]['openid']);

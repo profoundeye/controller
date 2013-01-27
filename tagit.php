@@ -13,6 +13,26 @@
 			
     	}
 		
+		function thingsTag(){
+			//这个函数是给微博发商品打标用的
+			$thisTags = $this->thisTag($this->spArgs("productId"),$this->uid);
+			foreach ($thisTags as $k => $v) {
+				$thisTag.=$v['producttags'][0]['tag']." ";
+			}
+			$str = '<ul id="tagIt">
+			<li class="tagInput">标签(多个标签用空格分隔): <input id="tags" name="tags" type="text" value="'.$thisTag.'"></li>';
+			//插入我的标签
+			$str .='<li id="mytags" class="clearfix"><dl><dt>我的标签:</dt><dd>';
+			$mytag = $this->myTag();
+			
+			foreach ($mytag as $k => $v) {
+				if($v['producttags'][0]['tag']!='在玩'&&$v['producttags'][0]['tag']!='想玩')
+				$str.="<span>".$v['producttags'][0]['tag']."</span>";
+			}
+			$str .='</dd></dl></li></ul>';
+			$this->api_success($str);
+		}
+		
 		function thisplaying(){
 			
 			//$this->api_success(is_avatar_path($_SESSION['uid']));exit;
