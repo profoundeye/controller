@@ -198,7 +198,8 @@ class mybuy extends top{
 				$cond = array("status"=>1);
 			}
 			
-			$rs = $db->spPager($this->spArgs('page', 1), 10)->findAll($cond,"time desc");
+			$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 10)->findAll($cond,"time desc");
+			//print_r($rs);exit;
 			$this->pager = $db->spPager()->getPager();
 					
 		}else{
@@ -220,10 +221,78 @@ class mybuy extends top{
 		$this->display("theme/default/mybuy.html");
 	}
 	
-	function showHisList(){
+	function detail(){
+		$id=$this->spArgs("id");
+		$this->post=$this->spArgs("post");
+		$db = spClass('db_mybuy');
+		$this->d =  $db->detail($id);
+		//print_r($this->d);
+		$this->display("theme/default/mybuydetail.html");
+	}
+	
+	function requestBuy(){
+		//$this->needLogin();		
+		$weiboId = $this->spArgs("weiboId");
+		$detailId = $this->spArgs("detailId");
+		if(!$_COOKIE[$weiboId]){
+			$db=spClass("db_alertBuy");
+			$db->newAlert($weiboId,$detailId);
+			setcookie($weiboId,1,time()+3600);
+		};
+		
+		$this->api_success("购买地址请求中。。等待回复");
+	}
+	
+	function postBuy(){
+		$this->needLogin();
+		$db = spClass("db_mybuy");
+		$weiboId=$this->spArgs("weiboId");
+		
+		$rs = $db->find(array('weiboid'=>$weiboId));
+		if($rs['weibonick']!=$_SESSION['openconnect']['weibo']['name']){
+			$this->api_success("对不起，您不是原作者。。等待作者分享购买地址吧");
+			return;
+		}
+		
+		$url=$this->spArgs("url");
+		$id=$this->spArgs("detailId");
+		if(isset($id)&&isset($url)){
+			$db = spClass('db_mybuy');
+			$db->inputUrl($id,$url,$weiboId);
+			$this->api_success("修改完成");
+			return;
+		}else{
+			//$this->postForm = $this->spArgs("postForm");
+			$this->api_success("请输入购买地址：<input id=url name=url type=text style='width:400px'/>");
+		}
+	}
+	
+	function crontabPost(){
+		$db=spClass('db_alertBuy');
+		$rs = $db->findAll(array("done"=>0)," id desc","","10");
+		foreach($rs as $r){
+			switch($r['times']){
+				case "1":
+					$this->postWeibo($r['times'],$r['weiboId'],$r['detailId']);
+				break;
+		
+				case "5":
+					$this->postWeibo($r['times'],$r['weiboId'],$r['detailId']);
+				break;					
+			}
+
+			sleep(1);
+		}
 		
 	}
-
 	
-	
+	function postWeibo($times=1,$id,$detailId){
+		$p['comment']="有".$times."人在求这件好东东的购买地址,可以分享一下吗？http://www.zplaying.com/mybuy/detail/post/1/id/".$detailId;
+		$p['access_token']=$this->get_accesstoken();
+		$p['id']=$id;
+		//$url="https://api.weibo.com/2/statuses/repost.json";
+		$url="https://api.weibo.com/2/comments/create.json";
+		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
+		$rs = json_decode($result);	
+	}
 }

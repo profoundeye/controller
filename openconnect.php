@@ -254,6 +254,7 @@ class openconnect extends top
 			$_SESSION['openconnect'][$d['types']]['openid'] = $d['openid'];
 			$_SESSION['openconnect'][$d['types']]['token'] = $d['token'];
 			$_SESSION['openconnect'][$d['types']]['secret'] = $d['secret'];
+			$_SESSION['openconnect'][$d['types']]['name'] = $d['name'];
 		}
 	}
 	
