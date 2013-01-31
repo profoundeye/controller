@@ -135,7 +135,7 @@ class mybuy extends top{
 		}
 		$since_id = $this->returnSinceid()?$this->returnSinceid():"3533646079859847";
 		echo "newest id:".$since_id;
-		$since_id ='3532886654992203';
+		//$since_id ='3532886654992203';
 		//测试最大分页
 		$page=1;
 		do{
@@ -152,7 +152,7 @@ class mybuy extends top{
 		echo "max page:$realPage";
 	//echo "get maxpage:$realPage ok";
 		$db = spClass('db_mybuy');
-		do{
+		while($realPage>=1){
 			arsort($tmp[$realPage]);
 			foreach ($tmp[$realPage] as $k => $v) {
 				if(!$db->find(array('weiboid'=>$v['weiboid']))&&!empty($v['pic']))
@@ -161,7 +161,7 @@ class mybuy extends top{
 			}	
 			//确定是否有非重复数据				
 			$realPage--;
-		}while($realPage>=1);
+		};
 	}
 	
 	//通知用户
