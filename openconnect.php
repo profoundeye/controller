@@ -116,6 +116,7 @@ class openconnect extends top
 	
 	function weiboCallback(){
 		$obj = spClass('sinaConnect');
+		$this->app = 'weibo';
 		$obj->init($this->yb['openlogin_weib_appid'],$this->yb['openlogin_weib_appkey'],$this->yb['openlogin_weib_callback']);
 		//获取acesstoken
 		$obj->callBack();
@@ -197,6 +198,11 @@ class openconnect extends top
 	
 	function is_member($openid){
 		$user = spClass('db_memberex')->spLinker()->find(array('openid'=>$openid)); //获取用户数据
+		if(empty($user['name'])){
+			
+			$name = $_SESSION[$this->app]["name"];
+			spClass('db_memberex')->update(array('openid'=>$user['openid']),array("name"=>$name));
+		}
 		if($user){
 			return $user;
 		}else{
