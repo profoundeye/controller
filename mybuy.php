@@ -135,7 +135,7 @@ class mybuy extends top{
 		}
 		$since_id = $this->returnSinceid()?$this->returnSinceid():"3533646079859847";
 		echo "newest id:".$since_id;
-		//$since_id ='3533762572679178';
+		$since_id ='3532886654992203';
 		//测试最大分页
 		$page=1;
 		do{
@@ -148,7 +148,6 @@ class mybuy extends top{
 			//print_r($tmp);exit;
 		}while(!empty($t));
 		//存储
-		
 		$realPage = $page-1;
 		echo "max page:$realPage";
 	//echo "get maxpage:$realPage ok";
@@ -162,7 +161,7 @@ class mybuy extends top{
 			}	
 			//确定是否有非重复数据				
 			$realPage--;
-		}while($realPage>1);
+		}while($realPage>=1);
 	}
 	
 	//通知用户
