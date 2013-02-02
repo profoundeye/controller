@@ -7,11 +7,12 @@
  
 class main extends top
 {
-    function __construct(){  
+    function __construct(){
         parent::__construct(); 
     }
 
-	public function index(){
+	public function kaixiang(){
+		
 		if($this->uid == 0){
 			$display = ($this->yb['guestMode'] == 1) ? 'index' : 'login';
 			$this->email = spClass('ybCookie')->get_cookie('unames');
@@ -26,6 +27,7 @@ class main extends top
 		$this->CurrentModule = 'index';
 
 		$this->display($display.'.html');
+		 
 	}
 
 

@@ -8,6 +8,10 @@ class mybuy extends top{
 		  set_time_limit(0);
 	}	
 	
+	function index(){
+		$this->show();
+	}
+	
 	function mybuy_admin() {
 		if($_SESSION['admin'] != 1){
             prient_jump(spUrl('main'));
