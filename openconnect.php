@@ -88,13 +88,13 @@ class openconnect extends top
 				spClass('db_memberex')->CancelBind($type,$_SESSION['uid']);
 				unset($_SESSION['openconnect'][$type]);
 				spClass('db_memberex')->delete(array('openid'=>$this->user['openid']));
-				$this->error($msg,spUrl('main','index'));
+				$this->error($msg,spUrl('mybuy','index'));
 			}
 
 			if($user)
 			{//如果存在，而且关联了账号，直接开始登陆。
 				$this->setLoginInfo($user['user']);
-				$this->jslocation(spUrl('main','index'));
+				$this->jslocation(spUrl('mybuy','index'));
 			}else{
 				//如果不存在 提示绑定
 				$this->display('oauth/login.html');
@@ -126,7 +126,7 @@ class openconnect extends top
 			//如过有，写入登陆信息,并跳转
 			$this->setLoginInfo($user['user']);
 			echo "账户已经存在，登陆完成";
-			$this->jslocation(spUrl('main','index'));
+			$this->jslocation(spUrl('mybuy','index'));
 		}else{
 			//调用绑定界面
 			$this->displayLoginHtml('weibo');
@@ -222,7 +222,7 @@ class openconnect extends top
 				'expires'=> empty($session['expires']) ? 0 : $session['expires'],
 			);
 			$this->activeLogin($params);
-			$this->jslocation(spUrl('main','index'));
+			$this->jslocation(spUrl('mybuy','index'));
 		}
 	}	
 	

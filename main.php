@@ -50,7 +50,7 @@ class main extends top
 	public function login(){
 		$this->time = time();
 		$this->email = spClass('ybCookie')->get_cookie('unames');
-		$this->display('login.html');
+		$this->display('loginOauth.html');
 	}
 
 	/*用户注册*/
