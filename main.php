@@ -48,6 +48,7 @@ class main extends top
 
 	/*用户登陆*/
 	public function login(){
+		$this->ajax = $this->spArgs("s");
 		$this->time = time();
 		$this->email = spClass('ybCookie')->get_cookie('unames');
 		$this->display('loginOauth.html');

@@ -225,10 +225,15 @@ class mybuy extends top{
 	}
 	
 	function detail(){
+		$nowUrl = ('http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); 
+		$_SESSION["jumpUrl"]=$nowUrl;
 		$id=$this->spArgs("id");
-		$this->post=$this->spArgs("post");
+		
 		$db = spClass('db_mybuy');
 		$this->d =  $db->detail($id);
+		if(!$this->d['product']['buy_url']){
+			$this->post=$this->spArgs("post");
+		}
 		//print_r($this->d);
 		$this->display("theme/default/mybuydetail.html");
 	}
@@ -240,6 +245,7 @@ class mybuy extends top{
 		if(!$_COOKIE[$weiboId]){
 			$db=spClass("db_alertBuy");
 			$db->newAlert($weiboId,$detailId);
+			
 			setcookie($weiboId,1,time()+3600);
 		};
 		
@@ -253,7 +259,7 @@ class mybuy extends top{
 		
 		$rs = $db->find(array('weiboid'=>$weiboId));
 		if($rs['weibonick']!=$_SESSION['openconnect']['weibo']['name']){
-			$this->api_success("对不起，您不是原作者。。等待作者分享购买地址吧");
+			$this->api_success("对不起，您不是原作者。。等待作者分享购买地址吧||或者您还没有新浪微博登录？点击这里登录<a href=".spUrl("openconnect","weibo").">sina微博登录</a>");
 			return;
 		}
 		
@@ -262,6 +268,8 @@ class mybuy extends top{
 		if(isset($id)&&isset($url)){
 			$db = spClass('db_mybuy');
 			$db->inputUrl($id,$url,$weiboId);
+			$db = spClass('db_notice');
+			$db->buyAlertNotice($id);
 			$this->api_success("修改完成");
 			return;
 		}else{
@@ -272,15 +280,20 @@ class mybuy extends top{
 	
 	function crontabPost(){
 		$db=spClass('db_alertBuy');
-		$rs = $db->findAll(array("done"=>0)," id desc","","10");
+		$rs =$db->findSql("select *,sum(times) as sumTimes from ".DBPRE."alertbuy where done=0 group by weiboId limit 10");
+		//$rs = $db->findAll(array("done"=>0)," id desc","","10");
 		foreach($rs as $r){
-			switch($r['times']){
-				case "1":
-					$this->postWeibo($r['times'],$r['weiboId'],$r['detailId']);
+			switch($r['sumTimes']){
+				case ($r['sumTimes']<=2):
+					$this->postWeibo($r['sumTimes'],$r['weiboId'],$r['detailId']);
 				break;
 		
-				case "5":
-					$this->postWeibo($r['times'],$r['weiboId'],$r['detailId']);
+				case ($r['sumTimes']==5):
+					$this->postWeibo($r['sumTimes'],$r['weiboId'],$r['detailId']);
+				break;	
+				
+				case ($r['sumTimes']>=9):
+					$this->postWeibo($r['sumTimes'],$r['weiboId'],$r['detailId']);
 				break;					
 			}
 
@@ -290,7 +303,7 @@ class mybuy extends top{
 	}
 	
 	function postWeibo($times=1,$id,$detailId){
-		$p['comment']="有".$times."人在求这件好东东的购买地址,可以分享一下吗？http://www.zplaying.com/mybuy/detail/post/1/id/".$detailId;
+		$p['comment']="有".$times."人在求这件好东东的购买地址,可以分享一下吗？把购买链接贴到这里吧。http://www.zplaying.com/mybuy/detail/post/1/id/".$detailId;
 		$p['access_token']=$this->get_accesstoken();
 		$p['id']=$id;
 		//$url="https://api.weibo.com/2/statuses/repost.json";
