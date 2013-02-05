@@ -25,6 +25,8 @@ class mybuy extends top{
 			$this->show_adminList();
 		}		
 	}
+
+	
 	
 	function callback(){
 		if (isset($_REQUEST['code'])) {
@@ -53,7 +55,47 @@ class mybuy extends top{
 		$this->display("admin/mybuy.html");
 	}
 	
+	function showRequestPostList(){
+		if($_SESSION['admin'] != 1){
+            prient_jump(spUrl('main'));
+        }
+		$db = spClass('db_alertBuy');
+		//$style = $this->spArgs("style");
+		//用户求购
+		//$rs = $db->spPager($this->spArgs('page', 1), 30)->findAll();
+		//$this->pager = $db->spPager()->pagerHtml('mybuy', 'showRequestPostList');
+		$rs = $db->findAll("done!=1");
+		foreach ($rs as $k => $r) {
+			if($r["uid"]==0){
+				$aTimes=0;
+				$aTimes = $temp['weiboId']['uTimes']?$temp['weiboId']['uTimes']+$r['times']:$r['times'];
+			}else{
+				$uTimes=0;
+				$uTimes = $temp['weiboId']['aTimes']?$temp['weiboId']['aTimes']+$r['times']:$r['times'];
+			}
+			
+			$temp[$r['weiboId']]=array('weiboId'=>$r['weiboId'],'detailId'=>$r['detailId'],'uTimes'=>$uTimes,'aTimes'=>$aTimes,'uid'=>$temp['weiboId']['uid']?$temp['weiboId']['userId'].','.$r['uid']:$r['uid'],'times'=>$uTimes+$aTimes);
+		}
+		//匿名求购
+		$this->t=$temp;
+		$this->display('admin/mybuyRequest.html');
+	}
+	
+	function postAdmin(){
+		if($_SESSION['admin'] != 1){
+            prient_jump(spUrl('main'));
+        }
+		$times = $this->spArgs('times');
+		$weiboId = $this->spArgs('weiboId');
+		$detailId = $this->spArgs('detailId');
+		$this->postWeibo($times,$weiboId,$detailId);
+		$this->showRequestPostList();
+	}
+	
 	function agree(){
+		if($_SESSION['admin'] != 1){
+            prient_jump(spUrl('main'));
+        }
 		$id = $this->spArgs("id");
 		$db=spClass("db_mybuy");
 		$rs = $db->update(array("id"=>$id),array("status"=>1));
@@ -63,6 +105,9 @@ class mybuy extends top{
 	}
 	
 	function del(){
+		if($_SESSION['admin'] != 1){
+            prient_jump(spUrl('main'));
+        }
 		$id = $this->spArgs("id");
 		$db=spClass("db_mybuy");
 		$db->update(array("id"=>$id),array("status"=>-1));
@@ -258,7 +303,7 @@ class mybuy extends top{
 		$weiboId=$this->spArgs("weiboId");
 		
 		$rs = $db->find(array('weiboid'=>$weiboId));
-		if($rs['weibonick']!=$_SESSION['openconnect']['weibo']['name']){
+		if($rs['weibonick']!=$_SESSION['openconnect']['weibo']['name']&&$_SESSION['admin']!=1){
 			$this->api_success("对不起，您不是原作者。。等待作者分享购买地址吧||或者您还没有新浪微博登录？点击这里登录<a href=".spUrl("openconnect","weibo").">sina微博登录</a>");
 			return;
 		}
