@@ -358,7 +358,8 @@ class mybuy extends top{
 	}
 	
 	function img(){
-		$img = urldecode($this->spArgs("img"));
+		$img = base64_decode($this->spArgs("img"));
+	//	echo base64_encode("http://ww3.sinaimg.cn/large/6f6c51e0jw1e1hmcyiyp3j.jpg");exit;
 		header('Content-Type:image');
 		echo file_get_contents($img);
 	}
