@@ -19,7 +19,7 @@ class product extends top
 			//判断权限
 			if($_SESSION['admin'] != 1){
 				if($this->getUid($this->_bid) != $this->uid){
-					$this->error('您没有权利编辑该文章',spUrl('main','index'));
+					$this->error('您没有权利编辑该文章',spUrl('mybuy','index'));
 				}
 			}
 			
@@ -170,7 +170,7 @@ class product extends top
 		}
 		
 		$db->createAll($newData);
-		header('Location:'.spUrl('main'));
+		header('Location:'.spUrl('mybuy'));
 	}
 	
 	function getUid($bid){
