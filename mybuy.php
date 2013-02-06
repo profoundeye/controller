@@ -356,4 +356,10 @@ class mybuy extends top{
 		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
 		$rs = json_decode($result);	
 	}
+	
+	function img(){
+		$img = urldecode($this->spArgs("img"));
+		header('Content-Type:image');
+		echo file_get_contents($img);
+	}
 }
