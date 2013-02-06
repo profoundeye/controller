@@ -11,6 +11,10 @@ class main extends top
         parent::__construct(); 
     }
 
+	function index(){
+		header('Location:'.spUrl('mybuy','index'));
+	}
+
 	public function kaixiang(){
 		
 		if($this->uid == 0){
