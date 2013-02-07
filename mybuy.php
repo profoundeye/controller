@@ -246,7 +246,7 @@ class mybuy extends top{
 				$cond = array("status"=>1);
 			}
 			
-			$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 10)->findAll($cond,"time desc");
+			$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 30)->findAll($cond,"time desc");
 			//print_r($rs);exit;
 			$this->pager = $db->spPager()->getPager();
 					
@@ -255,9 +255,10 @@ class mybuy extends top{
 			
 		}
 			$this->n = $n?$n:'大家';
-			foreach($rs as $r){
+			foreach($rs as $k=>$r){
 				$t = (string)date("Y-m-d",strtotime($r['time'])) ;
-				$m[$t][]=$r;
+				$m[$t][$k]=$r;
+				$m[$t][$k]['img']="http://zplaying.qiniudn.com/mybuy/img/img/".base64_encode($r['pic']."-w280");
 			}
 			$this->m=$m;	
 		//print_r($this->m);exit;
