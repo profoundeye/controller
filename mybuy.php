@@ -258,7 +258,7 @@ class mybuy extends top{
 			foreach($rs as $k=>$r){
 				$t = (string)date("Y-m-d",strtotime($r['time'])) ;
 				$m[$t][$k]=$r;
-				$m[$t][$k]['img']="http://zplaying.qiniudn.com/mybuy/img/img/".base64_encode($r['pic']."-w280");
+				$m[$t][$k]['img']="http://zplaying.qiniudn.com/mybuy/img/img/".base64_encode($r['pic'])."-w280";
 			}
 			$this->m=$m;	
 		//print_r($this->m);exit;
