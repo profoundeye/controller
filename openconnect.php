@@ -125,6 +125,7 @@ class openconnect extends top
 		if($user){
 			//如过有，写入登陆信息,并跳转
 			$this->setLoginInfo($user['user']);
+			$this->updateToken();
 			echo "账户已经存在，登陆完成";
 			$this->jslocation(spUrl('mybuy','index'));
 		}else{
@@ -226,6 +227,11 @@ class openconnect extends top
 		}
 	}	
 	
+	function updateToken(){
+		$token = $_SESSION['weibo']['oauth_token'];
+		$uid = $_SESSION['uid'];
+		spClass('db_memberex')->update(array('uid'=>$uid),array("token"=>$token));
+	}
 	
 	/*写入登陆信息*/
 	private function setLoginInfo($result,$type)

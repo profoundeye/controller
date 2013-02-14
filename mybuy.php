@@ -348,14 +348,47 @@ class mybuy extends top{
 		
 	}
 	
-	function postWeibo($times=1,$id,$detailId){
+	function crontabComment(){
+		$db=spClass('db_weibo');
+		$rs = $db->spLinker()->findAll(array("done"=>0),"","","1000");
+		foreach($rs as $r){
+			$return = $this->commentWeibo($r['weibo']['weiboid'],$r['content'],$r['memberex']['token']);
+			if(!$return->error){
+				$db->done($r['bid']);
+			}
+		
+			sleep(1);
+		}
+	}
+	
+	function postWeibo($times=1,$id,$detailId,$comment=""){
 		$p['comment']="有".$times."人在求这件好东东的购买地址,可以分享一下吗？把购买链接贴到这里吧。http://www.zplaying.com/mybuy/detail/post/1/id/".$detailId;
 		$p['access_token']=$this->get_accesstoken();
 		$p['id']=$id;
+
 		//$url="https://api.weibo.com/2/statuses/repost.json";
 		$url="https://api.weibo.com/2/comments/create.json";
 		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
 		$rs = json_decode($result);	
+	}
+
+	function reply($bid,$uid){
+		
+		$rs=spClass("mybuy")->find(array("id"=>$bid*-1));
+		$weiboId=$rs['weiboId'];
+		$this->commentWeibo($weiboId,s);
+	}
+
+	function commentWeibo($weiboId,$comment,$token){
+		$p['comment']=$comment;
+		$p['access_token']=$token;
+		$p['id']=$weiboId;
+					
+		//$url="https://api.weibo.com/2/statuses/repost.json";
+		$url="https://api.weibo.com/2/comments/create.json";
+		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
+		$rs = json_decode($result);	
+		return $rs;
 	}
 	
 	function img(){
@@ -363,5 +396,8 @@ class mybuy extends top{
 	//	echo base64_encode("http://ww3.sinaimg.cn/large/6f6c51e0jw1e1hmcyiyp3j.jpg");exit;
 		header('Content-Type:image');
 		echo file_get_contents($img);
+	}
+	function test(){
+		$this->display("theme/default/test.html");
 	}
 }
