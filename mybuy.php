@@ -353,7 +353,7 @@ class mybuy extends top{
 		$rs = $db->spLinker()->findAll(array("done"=>0),"","","1000");
 		foreach($rs as $r){
 			$return = $this->commentWeibo($r['weibo']['weiboid'],$r['content'],$r['memberex']['token']);
-				print_r($return);
+				//print_r($return);
 			if(!$return->error){
 				$db->done($r['bid']);
 			}
@@ -364,7 +364,7 @@ class mybuy extends top{
 	
 	function crontabCommentReturn(){
 		$db=spClass('db_weibo');
-		$con="done=1 and time>'".date("Y-m-d H:i:s",strtotime('-3 day'))."'";
+		$con="done=1 and time>'".date("Y-m-d H:i:s",strtotime('-1 day'))."'";
 		$rs = $db->spLinker()->findAll($con,"","","1000");
 
 		foreach($rs as $r){
