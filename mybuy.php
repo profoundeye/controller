@@ -353,6 +353,7 @@ class mybuy extends top{
 		$rs = $db->spLinker()->findAll(array("done"=>0),"","","1000");
 		foreach($rs as $r){
 			$return = $this->commentWeibo($r['weibo']['weiboid'],$r['content'],$r['memberex']['token']);
+				print_r($return);
 			if(!$return->error){
 				$db->done($r['bid']);
 			}
@@ -360,6 +361,53 @@ class mybuy extends top{
 			sleep(1);
 		}
 	}
+	
+	function crontabCommentReturn(){
+		$db=spClass('db_weibo');
+		$con="done=1 and time>'".date("Y-m-d H:i:s",strtotime('-3 day'))."'";
+		$rs = $db->spLinker()->findAll($con,"","","1000");
+
+		foreach($rs as $r){
+			$temp[$r['weibo']['weiboid']][]=$r['memberex']['name'];
+		}
+
+		foreach($temp as $k=>$t){
+			$weiboRs=$this->getWeiboComment($k);
+			if($weiboRs){
+				foreach($weiboRs['comments'] as $c){
+					$_weiboId = $c['idstr'];
+					$_name=$c['reply_comment']['user']['screen_name'];
+					if($_name){
+						$_is_array = in_array($_name,$temp[$k]);
+						if($_is_array){
+							//说明有回复，创建回复
+							$data = array("weiboId"=>$k,"msg"=>$c['text'],"creater"=>$c['user']['name']);
+							spClass("db_replay")->createReplayFromSina($data);
+						}
+					}
+				}
+			}
+			sleep(1);
+			//print_r($weiboRs);exit;
+		}
+		
+		
+	}
+	
+	
+	function getWeiboComment($id){
+			$p['access_token']=$p['access_token']?$p['access_token']:$this->get_accesstoken();
+			$p['id']=$id;
+			$url="https://api.weibo.com/2/comments/show.json";
+			$result = SaeTOAuthV2::oAuthRequest($url,"GET",$p);
+			if(!$return->error){
+				return json_decode($result,true);	
+			}else{
+				return false;
+			}
+			
+	}
+	
 	
 	function postWeibo($times=1,$id,$detailId,$comment=""){
 		$p['comment']="有".$times."人在求这件好东东的购买地址,可以分享一下吗？把购买链接贴到这里吧。http://www.zplaying.com/mybuy/detail/post/1/id/".$detailId;

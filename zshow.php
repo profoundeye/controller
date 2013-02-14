@@ -3,6 +3,11 @@
     class zshow extends userblog{
     public function show()
 	{
+		$bid = $this->spArgs('bid');
+		if($bid<0){
+			header('Location:'.spUrl('mybuy','detail',array("id"=>$bid*-1)));
+			exit;
+		}
 		$this->getUserSkin($this->spArgs('bid'));
 		$this->getMyFollow();
 		$this->getMyLook();
