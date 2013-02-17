@@ -352,7 +352,7 @@ class mybuy extends top{
 		$db=spClass('db_weibo');
 		$rs = $db->spLinker()->findAll(array("done"=>0),"","","1000");
 		foreach($rs as $r){
-			$return = $this->commentWeibo($r['weibo']['weiboid'],$r['content']."来自[正玩http://www.zplaying.com/mybuy/detail/id/".$r['bid'].".]",$r['memberex']['token']);
+			$return = $this->commentWeibo($r['weibo']['weiboid'],$r['content']."来自[正玩]http://www.zplaying.com/mybuy/detail/id/".$r['bid'],$r['memberex']['token']);
 				//print_r($return);
 			if(!$return->error){
 				$db->done($r['bid']);
