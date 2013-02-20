@@ -376,7 +376,7 @@ class mybuy extends top{
 			if($weiboRs){
 				foreach($weiboRs['comments'] as $c){
 					$_weiboId = $c['idstr'];
-					$_name=$c['reply_comment']['user']['screen_name'];
+					$_name=$c['reply_comment']['user']['screen_name']?$c['reply_comment']['user']['screen_name']:$c['user']['screen_name'];
 					if($_name){
 						$_is_array = $member->is_memberex($_name);
 						if($_is_array){
