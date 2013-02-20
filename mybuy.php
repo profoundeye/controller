@@ -352,7 +352,7 @@ class mybuy extends top{
 		$db=spClass('db_weibo');
 		$rs = $db->spLinker()->findAll(array("done"=>0),"","","1000");
 		foreach($rs as $r){
-			$return = $this->commentWeibo($r['weibo']['weiboid'],$r['content']."来自[正玩]http://www.zplaying.com/mybuy/detail/id/".$r['bid'],$r['memberex']['token']);
+			$return = $this->commentWeibo($r['weibo']['weiboid'],$r['content']."来自【正玩】http://www.zplaying.com/mybuy/detail/id/".$r['bid'],$r['memberex']['token']);
 				//print_r($return);
 			if(!$return->error){
 				$db->done($r['bid']);
@@ -366,7 +366,7 @@ class mybuy extends top{
 		$db=spClass('db_weibo');
 		$con="done=1 and time>'".date("Y-m-d H:i:s",strtotime('-1 day'))."'";
 		$rs = $db->spLinker()->findAll($con,"","","1000");
-
+		$member = spClass("db_memberex");
 		foreach($rs as $r){
 			$temp[$r['weibo']['weiboid']][]=$r['memberex']['name'];
 		}
@@ -378,9 +378,9 @@ class mybuy extends top{
 					$_weiboId = $c['idstr'];
 					$_name=$c['reply_comment']['user']['screen_name'];
 					if($_name){
-						$_is_array = in_array($_name,$temp[$k]);
+						$_is_array = $member->is_memberex($_name);
 						if($_is_array){
-							//说明有回复，创建回复
+							//说明有zplaying网友回复，创建回复
 							$data = array("weiboId"=>$k,"msg"=>$c['text'],"creater"=>$c['user']['name']);
 							spClass("db_replay")->createReplayFromSina($data);
 						}
