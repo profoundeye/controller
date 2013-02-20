@@ -139,6 +139,35 @@ class mybuy extends top{
 			$this->o = new SaeTOAuthV2( WB_AKEY , WB_SKEY);
 	}
 	
+	function myRePoster(){
+		$p['access_token']=$this->get_accesstoken();
+		$p['count']=10;
+		$url="https://api.weibo.com/2/statuses/user_timeline.json";
+		$result = SaeTOAuthV2::oAuthRequest($url,"GET",$p);
+		$rs = json_decode($result);	
+		if($rs->error){
+			echo $rs->error;
+			exit;
+		}
+		$db = spClass('db_mybuy');
+		foreach($rs->statuses as $k=>$r){
+				if($r->retweeted_status->original_pic){
+					$d[$k]['pic']=$r->retweeted_status->original_pic;
+					$d[$k]['text']=$r->retweeted_status->text;
+					$d[$k]['weiboid']=(string)$r->retweeted_status->idstr;
+					$d[$k]['weibonick']=$r->retweeted_status->user->name;
+				}			
+		}
+
+		arsort($d);
+		foreach($d as $v){
+			if(!$db->find(array('weiboid'=>$v['weiboid']))&&!empty($v['pic']))
+			$rs = $db->create($v);	
+		}
+
+		
+	}
+	
 	function ATme($page=1,$since_id="0"){
 		//这里还缺超时判断
 		$p['page']=$page;
@@ -172,7 +201,6 @@ class mybuy extends top{
 			
 		}
 
-		//print_r($d);exit;
 		return $d;
 		
 	}
