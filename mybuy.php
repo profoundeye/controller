@@ -376,11 +376,11 @@ class mybuy extends top{
 			if($weiboRs){
 				foreach($weiboRs['comments'] as $c){
 					$_weiboId = $c['idstr'];
-					$_name=$c['reply_comment']['user']['screen_name']?$c['reply_comment']['user']['screen_name']:$c['user']['screen_name'];
+					$_name=$c['reply_comment']['user']['screen_name'];
 					if($_name){
-						$_is_array = $member->is_memberex($_name);
+						$_is_array = in_array($_name,$temp[$k]);
 						if($_is_array){
-							//说明有zplaying网友回复，创建回复
+							//说明有回复，创建回复
 							$data = array("weiboId"=>$k,"msg"=>$c['text'],"creater"=>$c['user']['name']);
 							spClass("db_replay")->createReplayFromSina($data);
 						}
