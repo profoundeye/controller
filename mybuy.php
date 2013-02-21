@@ -324,7 +324,7 @@ class mybuy extends top{
 		}
 			$this->n = $n?$n:'大家';
 			foreach($rs as $k=>$r){
-				$t = (string)date("Y-m-d",strtotime($r['time'])) ;
+				$t = (string)date("Y-m-d",strtotime($r['createDate'])) ;
 				$m[$t][$k]=$r;
 				$m[$t][$k]['img']="http://zplaying.qiniudn.com/mybuy/img/img/".base64_encode($r['pic'])."-w280";
 			}
