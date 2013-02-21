@@ -287,7 +287,7 @@ class mybuy extends top{
 		$n = urldecode($this->spArgs("n"));
 		$cond = "status=1 and pid<>0";
 		$db = spClass('db_mybuy');
-		$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 30)->findAll($cond,"time desc");
+		$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 30)->findAll($cond,"id desc");
 		//print_r($rs);exit;
 		$this->pager = $db->spPager()->getPager();
 		
