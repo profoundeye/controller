@@ -268,7 +268,26 @@ class mybuy extends top{
 		$n = urldecode($this->spArgs("n"));
 		$cond = array("status"=>1);
 		$db = spClass('db_mybuy');
-		$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 30)->findAll($cond,"replay desc");
+		$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 30)->findAll($cond,"time desc");
+		//print_r($rs);exit;
+		$this->pager = $db->spPager()->getPager();
+		
+		$this->n = $n?$n:'大家';
+			foreach($rs as $k=>$r){
+				$m[" "][$k]=$r;
+				$m[" "][$k]['img']="http://zplaying.qiniudn.com/mybuy/img/img/".base64_encode($r['pic'])."-w280";
+			}
+			$this->m=$m;	
+		$this->show="showHot";
+		//print_r($this->pager);exit;
+		$this->display("theme/default/mybuy.html");
+	}
+	
+	function showBuy(){
+		$n = urldecode($this->spArgs("n"));
+		$cond = "status=1 and pid<>0";
+		$db = spClass('db_mybuy');
+		$rs = $db->spLinker()->spPager($this->spArgs('page', 1), 30)->findAll($cond,"time desc");
 		//print_r($rs);exit;
 		$this->pager = $db->spPager()->getPager();
 		
