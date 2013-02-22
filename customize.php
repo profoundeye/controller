@@ -69,7 +69,7 @@ class customize extends top
 		if($this->spArgs('user')){
 			$user = $this->spArgs('user');
 
-			if(utf8_strlen($user['niname']) < 2 || utf8_strlen($user['niname']) > 10){
+			if(utf8_strlen($user['niname']) < 2 || utf8_strlen($user['niname']) > 15){
 				$this->error('昵称不符合规范,忽略保存用户信息');
 			}else{
 				$niname = spClass('db_member')->find(array('username'=>$user['niname']),'','uid,username');
