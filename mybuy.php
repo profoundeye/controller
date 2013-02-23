@@ -189,6 +189,7 @@ class mybuy extends top{
 				$d[$k]['text']=$r->text;
 				$d[$k]['weiboid']=(string)$r->idstr;
 				$d[$k]['weibonick']=$r->user->name;
+				$d[$k]['createDate']=date("Y-m-d H:i:s");
 			}else{
 				if($r->retweeted_status->original_pic){
 					$d[$k]['pic']=$r->retweeted_status->original_pic;
