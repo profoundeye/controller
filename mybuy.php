@@ -9,7 +9,7 @@ class mybuy extends top{
 	}	
 	
 	function index(){
-		$this->show();
+		$this->showHot();
 	}
 	
 	function mybuy_admin() {
