@@ -12,7 +12,7 @@ class main extends top
     }
 
 	function index(){
-		header('Location:'.spUrl('mybuy','index'));
+		header('Location:'.spUrl('mybuy','showHot'));
 	}
 
 	public function kaixiang(){
