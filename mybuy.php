@@ -184,12 +184,13 @@ class mybuy extends top{
 		}
 		
 		foreach($rs->statuses as $k=>$r){
-			if($r->original_pic){
+			if($r->pic_urls){
 				$d[$k]['pic']=$r->original_pic;
 				$d[$k]['text']=$r->text;
 				$d[$k]['weiboid']=(string)$r->idstr;
 				$d[$k]['weibonick']=$r->user->name;
 				$d[$k]['createDate']=date("Y-m-d H:i:s");
+				$d[$k]['pic_urls']=$r->pic_urls;
 			}else{
 				if($r->retweeted_status->original_pic){
 					$d[$k]['pic']=$r->retweeted_status->original_pic;
@@ -197,6 +198,7 @@ class mybuy extends top{
 					$d[$k]['weiboid']=(string)$r->retweeted_status->idstr;
 					$d[$k]['weibonick']=$r->retweeted_status->user->name;
 					$d[$k]['createDate']=date("Y-m-d H:i:s");
+					$d[$k]['pic_urls']=$r->retweeted_status->pic_urls;
 				}				
 			}
 
@@ -215,7 +217,7 @@ class mybuy extends top{
 		}
 		$since_id = $this->returnSinceid()?$this->returnSinceid():"3533646079859847";
 		echo "newest id:".$since_id;
-		//$since_id ='3532886654992203';
+		$since_id ='3581242794234831';
 		//测试最大分页
 		$page=1;
 		do{
@@ -232,12 +234,18 @@ class mybuy extends top{
 		echo "max page:$realPage";
 	//echo "get maxpage:$realPage ok";
 		$db = spClass('db_mybuy');
+		$db_extend =spClass('db_mybuy_extend');
 		while($realPage>=1){
 			arsort($tmp[$realPage]);
 			foreach ($tmp[$realPage] as $k => $v) {
-				if(!$db->find(array('weiboid'=>$v['weiboid']))&&!empty($v['pic']))
+
+				if(!$db->find(array('weiboid'=>$v['weiboid']))&&!empty($v['pic'])){
+					$rs = $db->create($v);
+					$db_extend->addPics($rs,$v['pic_urls']);					
+				}
 				//print_r($v);
-				$rs = $db->create($v);
+				
+				
 			}	
 			//确定是否有非重复数据				
 			$realPage--;
@@ -246,7 +254,7 @@ class mybuy extends top{
 	
 	//通知用户
 	function notice($weibonick,$id){
-		$p['comment']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
+		$p['comment']="您正在玩的好东西，被推荐收录到正玩，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
 		//$p['status']="正玩已记录，这里可以看到您玩过的历史：http://www.zplaying.com/mybuy/show/n/".urlencode($weibonick);
 		//$p['is_comment']=3;
 		$p['access_token']=$this->get_accesstoken();
@@ -349,7 +357,7 @@ class mybuy extends top{
 		if(!$this->d['product']['buy_url']){
 			$this->post=$this->spArgs("post");
 		}
-		//print_r($this->d);
+
 		$this->display("theme/default/mybuydetail.html");
 	}
 	
