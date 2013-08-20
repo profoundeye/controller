@@ -101,6 +101,7 @@ class mybuy extends top{
 		$rs = $db->update(array("id"=>$id),array("status"=>1));
 		$rs = $db->find(array("id"=>$id));
 		$this->notice($rs['weibonick'],$rs['weiboid']);
+		$this->repost($rs['weibonick'],$rs['weiboid']);
 		$this->show_adminList();
 	}
 	
@@ -265,6 +266,15 @@ class mybuy extends top{
 		$rs = json_decode($result);	
 	}
 	
+	//用zplaying的微博转发
+	function repost($id){
+		$p['access_token']=$this->get_accesstoken();
+		$p['id']=$id;
+		$url="https://api.weibo.com/2/statuses/repost.json";
+		$result = SaeTOAuthV2::oAuthRequest($url,"POST",$p);
+		$rs = json_decode($result);	
+	}
+	
 	function returnSinceid(){
 		$db = spClass('db_mybuy');
 		$sql = "select weiboid as a from ".DBPRE."mybuy order by id desc limit 1";
@@ -329,6 +339,7 @@ class mybuy extends top{
 					
 		}else{
 			$rs = $db->returnTagGoods($this->spArgs("tagId"));
+			
 			
 		}
 			$this->n = $n?$n:'大家';
