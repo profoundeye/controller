@@ -267,7 +267,7 @@ class mybuy extends top{
 	}
 	
 	//用zplaying的微博转发
-	function repost($id){
+	function repost($weibonick,$id){
 		$p['access_token']=$this->get_accesstoken();
 		$p['id']=$id;
 		$url="https://api.weibo.com/2/statuses/repost.json";
