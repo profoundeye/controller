@@ -12,8 +12,10 @@ class main extends top
     }
 
 	function index(){
-		//header('Location:'.spUrl('mybuy','index'));
 		header('Location: http://www.zplaying.com/bbs/portal.php');
+		exit;
+		//header('Location:'.spUrl('mybuy','index'));
+		
 	}
 
 	public function kaixiang(){
